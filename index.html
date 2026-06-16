@@ -1,0 +1,2291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<!-- zzx@yndxw.com -->
+<!-- Open Graph 基础标签 -->
+<meta property="og:title" content="中国教材电子课本" />
+<meta property="og:description" content="免费在线浏览中小学教材，支持PDF阅读、标注、分享" />
+<meta property="og:image" content="https://raw.githubusercontent.com/13888285815/ChinaTextbook/master/初中/数学/2025初中数学/初中数学电子课本·北师大版/2025配套学习资料，每天更新，可免费下载、打印.jpg" />
+<meta property="og:url" content="https://13888285815.github.io/ChinaTextbook-Pages/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="中国教材电子课本" />
+<!-- Twitter Card 标签 -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="中国教材电子课本" />
+<meta name="twitter:description" content="免费在线浏览中小学教材，支持PDF阅读、标注、分享" />
+<meta name="twitter:image" content="https://raw.githubusercontent.com/13888285815/ChinaTextbook/master/初中/数学/2025初中数学/初中数学电子课本·北师大版/2025配套学习资料，每天更新，可免费下载、打印.jpg" />
+<!-- 微信特定标签 -->
+<meta name="description" content="免费在线浏览中小学教材，支持PDF阅读、标注、分享" />
+<meta name="keywords" content="教材,课本,电子课本,中小学教材,PDF阅读" />
+<!-- 微信JS-SDK配置 -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中国教材电子课本</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<style>
+/* ============ 全局基础样式 ============ */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;width:100%;overflow:hidden}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:linear-gradient(145deg,#0f1639 0%,#121e54 40%,#161a3c 100%);color:#e6e8f5;-webkit-font-smoothing:antialiased}
+button,input{font:inherit;border:none;outline:none;background:none;color:inherit}
+
+/* ============ CSS变量 - 统一布局尺寸 ============ */
+:root{
+  --top-bar-height:56px;
+  --preview-toolbar-height:56px;
+  --status-bar-height:46px;
+  --mobile-bottom-bar1-height:60px;
+  --mobile-bottom-bar2-height:52px;
+  --sidebar-width:280px;
+  --sidebar-width-min:240px;
+  --thumb-panel-width:220px;
+  --z-sidebar:200;
+  --z-toolbar:150;
+  --z-topbar:100;
+  --z-mobile-bar:90;
+  --z-content:1;
+}
+
+/* ============ 容器基础布局 ============ */
+.container{display:flex;flex-direction:column;width:100vw;height:100vh;max-width:100vw;max-height:100vh;overflow:hidden}
+
+/* ============ 顶部栏 (搜索区 + 功能区入口) ============ */
+.top-bar{
+  flex-shrink:0;
+  height:var(--top-bar-height);
+  background:rgba(12,21,55,.94);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  display:flex;
+  align-items:center;
+  padding:0 20px;
+  gap:16px;
+  box-shadow:0 8px 24px rgba(0,0,0,.18);
+  z-index:var(--z-topbar);
+}
+.top-bar .logo{display:flex;align-items:center;gap:10px;color:#f8f9fc;font-size:16px;font-weight:700;white-space:nowrap;flex-shrink:0}
+.top-bar .logo i{font-size:22px;color:#7c5dfc}
+.top-bar .logo span{color:#8f98c8;font-size:12px;font-weight:400}
+.search-global{position:relative;flex:1;min-width:0;max-width:480px}
+.search-global input{width:100%;padding:10px 14px 10px 40px;border-radius:999px;border:1px solid rgba(255,255,255,.1);background:rgba(18,29,70,.9);color:#f4f6ff;font-size:14px;transition:all .2s}
+.search-global input:focus{border-color:#7c5dfc;box-shadow:0 0 0 3px rgba(124,93,252,.12)}
+.search-global i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#8f98c8;font-size:14px}
+.user-area{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.user-area .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#7c5dfc,#5b3de8);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;box-shadow:0 6px 18px rgba(124,93,252,.25)}
+.menu-toggle{display:none;width:40px;height:40px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#c7d1f4;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.menu-toggle:hover{background:rgba(124,93,252,.1);color:#fff}
+
+/* ============ 主内容区域 (Flex布局自动分配空间) ============ */
+.main{
+  display:flex;
+  flex:1;
+  min-height:0;
+  overflow:hidden;
+}
+
+/* ============ 侧边栏 (树形结构目录) ============ */
+.sidebar{
+  flex-shrink:0;
+  width:var(--sidebar-width);
+  min-width:var(--sidebar-width-min);
+  background:rgba(10,18,46,.96);
+  border-right:1px solid rgba(255,255,255,.06);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  box-shadow:4px 0 20px rgba(0,0,0,.1);
+  transition:width .3s ease,margin .3s ease;
+}
+.sidebar.hidden{width:0;min-width:0;border-right:none;overflow:hidden}
+.sidebar-header{padding:16px 18px 10px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0}
+.sidebar-header h3{font-size:13px;color:#f2f5ff;letter-spacing:.02em;font-weight:600}
+.sidebar-header .count{font-size:11px;color:#9aabc7;background:rgba(255,255,255,.06);padding:4px 10px;border-radius:999px;font-weight:500}
+.search-box{padding:0 14px 12px;flex-shrink:0}
+.search-box input{width:100%;padding:9px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:rgba(22,33,70,.9);color:#eef2ff;font-size:13px;transition:border .2s}
+.search-box input:focus{border-color:#7c5dfc}
+.tree-wrap{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:6px 6px 14px}
+.tree-wrap::-webkit-scrollbar{width:6px}
+.tree-wrap::-webkit-scrollbar-thumb{background:rgba(124,93,252,.3);border-radius:3px}
+.tree-wrap::-webkit-scrollbar-track{background:transparent}
+
+/* ============ 树形结构样式 ============ */
+.tree-node{position:relative;margin:1px 0}
+.tree-label{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 12px;
+  color:#c7d1f4;
+  cursor:pointer;
+  transition:background .15s,color .15s;
+  border-radius:8px;
+  margin:2px 4px;
+  font-size:13px;
+  user-select:none;
+  position:relative;
+  min-height:38px;
+}
+.tree-label:hover{background:rgba(124,93,252,.12);color:#fff}
+.tree-label.active,.tree-label.selected{color:#fff;background:rgba(124,93,252,.32)}
+.tree-arrow{width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#8f9ecb;transition:transform .2s;font-size:9px;flex-shrink:0}
+.tree-arrow.rotated{transform:rotate(90deg)}
+.tree-arrow.empty{visibility:hidden}
+.tree-icon{width:18px;height:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px}
+.tree-icon.folder,.tree-icon.level-1{color:#ffd166}
+.tree-icon.file{color:#7c5dfc}
+.tree-icon.level-2{color:#6bb3ff}
+.tree-icon.level-3{color:#8f9cf5}
+.tree-name{flex:1;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;line-height:1.4;font-size:13px}
+.tree-count{font-size:10px;color:#8f98c8;background:rgba(255,255,255,.08);padding:2px 8px;border-radius:10px;flex-shrink:0}
+.tree-children{display:none;flex-direction:column;position:relative}
+.tree-children.open{display:flex}
+.tree-children::before{content:'';position:absolute;left:20px;top:0;bottom:6px;width:1px;background:rgba(255,255,255,.08)}
+.tree-node.level-2>.tree-label{padding-left:28px}
+.tree-node.level-3>.tree-label{padding-left:44px}
+.highlight-match{background:rgba(124,93,252,.45);color:#fff;border-radius:3px;padding:0 2px}
+
+/* ============ 拖拽分隔条 ============ */
+.splitter-v{width:4px;background:transparent;cursor:col-resize;transition:background .2s;flex-shrink:0}
+.splitter-v:hover{background:rgba(124,93,252,.2)}
+
+/* ============ 缩略图面板 ============ */
+.thumb-panel{
+  flex-shrink:0;
+  width:var(--thumb-panel-width);
+  min-width:180px;
+  background:rgba(8,16,42,.96);
+  border-right:1px solid rgba(255,255,255,.06);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  transition:width .3s,min-width .3s;
+}
+.thumb-panel.hidden{width:0;min-width:0;border-right:none;overflow:hidden}
+.thumb-header{padding:14px 16px;font-size:11px;color:#9aabd9;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:8px;font-weight:500;letter-spacing:.02em}
+.thumb-list{flex:1;min-height:0;overflow-y:auto;padding:12px}
+.thumb-list::-webkit-scrollbar{width:6px}
+.thumb-list::-webkit-scrollbar-thumb{background:rgba(124,93,252,.3);border-radius:3px}
+.thumb-item{margin-bottom:12px;border-radius:10px;overflow:hidden;border:1px solid transparent;background:rgba(255,255,255,.02);cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s}
+.thumb-item:hover{transform:translateY(-1px);border-color:rgba(124,93,252,.3);box-shadow:0 8px 20px rgba(0,0,0,.15)}
+.thumb-item.active{border-color:#7c5dfc;box-shadow:0 4px 14px rgba(124,93,252,.25)}
+.page-img{width:100%;aspect-ratio:3/4;background:linear-gradient(180deg,#1d234d 0%,#131a34 100%);display:flex;align-items:center;justify-content:center;color:#7f8beb;font-size:12px}
+.page-num{text-align:center;padding:6px 0;font-size:10px;color:#94a3c7}
+
+/* ============ 预览区域 (自适应核心) ============ */
+.preview-area{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  position:relative;
+  background:linear-gradient(180deg,rgba(15,21,55,.98),rgba(9,15,38,.98));
+}
+
+/* ============ 预览工具栏 (功能区) ============ */
+.preview-toolbar{
+  flex-shrink:0;
+  height:var(--preview-toolbar-height);
+  padding:0 16px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:rgba(12,20,49,.96);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  overflow-x:auto;
+  overflow-y:hidden;
+}
+.preview-toolbar::-webkit-scrollbar{height:3px}
+.preview-toolbar::-webkit-scrollbar-thumb{background:rgba(124,93,252,.25);border-radius:2px}
+.tool-group{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.tbtn{width:36px;height:36px;border-radius:10px;border:1px solid transparent;background:rgba(255,255,255,.04);color:#c7d1f4;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;font-size:13px}
+.tbtn:hover{border-color:rgba(124,93,252,.35);background:rgba(124,93,252,.12);color:#fff}
+.tbtn.active{background:#7c5dfc;color:#fff;border-color:#7c5dfc}
+
+/* 颜色选择器 */
+.color-picker-wrap{position:relative;flex-shrink:0}
+.color-palette{position:absolute;top:calc(100% + 8px);left:0;background:rgba(20,30,60,.98);border:1px solid rgba(124,93,252,.25);border-radius:12px;padding:10px;box-shadow:0 8px 32px rgba(0,0,0,.35);z-index:500;min-width:160px}
+.color-row{display:flex;gap:6px;margin-bottom:6px}
+.color-row:last-child{margin-bottom:0}
+.color-item{width:24px;height:24px;border-radius:7px;cursor:pointer;transition:transform .15s,box-shadow .15s;border:2px solid transparent;flex-shrink:0}
+.color-item:hover{transform:scale(1.15);box-shadow:0 0 12px rgba(124,93,252,.4)}
+.color-item.selected{border-color:#7c5dfc;box-shadow:0 0 0 2px rgba(124,93,252,.3)}
+
+.tool-sep{width:1px;height:24px;background:rgba(255,255,255,.1);flex-shrink:0;margin:0 4px}
+.zoom-info{font-size:12px;color:#9fb4d8;min-width:50px;text-align:center;flex-shrink:0}
+.page-info{display:flex;align-items:center;gap:8px;margin-left:auto;color:#9fb4d8;font-size:12px;flex-shrink:0}
+.page-info input{width:48px;padding:7px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(18,28,61,.95);color:#f4f6ff;text-align:center;font-size:12px}
+
+/* ============ 预览内容区 (浏览区) ============ */
+.preview-body{
+  flex:1;
+  min-height:0;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:20px;
+  position:relative;
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.preview-body::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at top right,rgba(124,93,252,.14),transparent 30%),radial-gradient(circle at bottom left,rgba(49,90,255,.1),transparent 28%);pointer-events:none}
+
+/* PDF查看器 */
+.pdf-viewer{position:relative;display:flex;align-items:flex-start;justify-content:center;width:100%;height:100%;min-height:0;touch-action:pan-y pinch-zoom;-webkit-overflow-scrolling:touch}
+.pdf-canvas-wrap{position:relative;flex-shrink:0;transform-origin:top left;max-width:100%}
+.pdf-canvas-wrap canvas{display:block;max-width:100%;height:auto!important}
+.annotation-canvas{position:absolute;left:0;top:0;touch-action:none;max-width:100%;height:auto!important}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;width:100%;color:#8f9ecb;gap:12px;text-align:center;padding:20px}
+.empty-state i{font-size:56px;opacity:.35}
+.empty-state h3{font-size:16px;color:#a2b0d9;font-weight:500}
+.empty-state p{font-size:13px;color:#7a89b8;max-width:280px;line-height:1.6}
+
+/* ============ 状态栏 ============ */
+.status-bar{
+  flex-shrink:0;
+  height:var(--status-bar-height);
+  padding:0 20px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+  font-size:12px;
+  color:#9fb4d8;
+  background:rgba(12,20,47,.94);
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.status-bar span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:40%}
+
+/* ============ 加载遮罩 ============ */
+.loading-overlay{position:absolute;inset:0;background:rgba(10,16,40,.85);display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:50}
+.loading-overlay.show{display:flex}
+.loading-spinner{width:42px;height:42px;border:4px solid rgba(124,93,252,.2);border-top-color:#7c5dfc;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{color:#9fb4d8;font-size:13px}
+
+/* ============ 模态框 ============ */
+.modal-bg{position:fixed;inset:0;background:rgba(6,11,28,.85);display:none;align-items:center;justify-content:center;z-index:2000;padding:20px}
+.modal-bg.show{display:flex}
+.modal-box{width:min(420px,100%);background:rgba(17,25,55,.98);border:1px solid rgba(124,93,252,.25);border-radius:18px;padding:24px;box-shadow:0 30px 90px rgba(0,0,0,.4)}
+.modal-box h3{font-size:17px;color:#fff;margin-bottom:10px;font-weight:600}
+.modal-box p{font-size:13px;color:#a2b0d9;margin-bottom:18px;line-height:1.6}
+.modal-box input{width:100%;padding:11px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(12,21,50,.96);color:#eef2ff;font-size:14px}
+.modal-btns{display:flex;justify-content:flex-end;gap:12px;margin-top:18px}
+.mbtn{padding:10px 18px;border-radius:12px;border:none;cursor:pointer;transition:all .15s;font-size:13px;font-weight:500}
+.mbtn-ok{background:#7c5dfc;color:#fff}
+.mbtn-ok:hover{background:#6b4ae8}
+.mbtn-cancel{background:rgba(255,255,255,.08);color:#d2d8ff}
+.mbtn-cancel:hover{background:rgba(255,255,255,.12)}
+
+/* ============ Toast提示 ============ */
+.toast{position:fixed;bottom:28px;right:28px;padding:12px 18px;border-radius:12px;background:rgba(124,93,252,.95);color:#fff;font-size:13px;box-shadow:0 20px 60px rgba(18,25,68,.35);opacity:0;transform:translateY(10px);transition:.25s ease;pointer-events:none;z-index:3000;max-width:calc(100vw - 56px)}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* ============ 全屏模式 ============ */
+body.fullscreen .top-bar,
+body.fullscreen .sidebar,
+body.fullscreen .thumb-panel,
+body.fullscreen .status-bar,
+body.fullscreen .splitter-v{display:none!important}
+body.fullscreen .preview-area{border-radius:0}
+body.fullscreen .preview-toolbar{position:sticky;top:0;z-index:10}
+
+/* ============ 快捷键提示 ============ */
+.shortcut-hint{position:fixed;bottom:80px;right:28px;background:rgba(17,25,55,.95);border:1px solid rgba(124,93,252,.2);border-radius:14px;padding:14px 18px;font-size:12px;color:#9fb4d8;z-index:2500;display:none;min-width:180px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.shortcut-hint.show{display:block}
+.shortcut-hint h4{color:#fff;margin-bottom:8px;font-size:13px;font-weight:600}
+.shortcut-hint div{display:flex;justify-content:space-between;gap:12px;padding:3px 0}
+.shortcut-hint kbd{background:rgba(124,93,252,.2);padding:2px 8px;border-radius:5px;color:#c7d1f4;font-family:inherit;font-size:11px}
+
+/* ============ 书签指示器 ============ */
+.bookmark-indicator{position:absolute;top:6px;right:6px;color:#ffd966;font-size:12px;opacity:0;transition:opacity .2s}
+.thumb-item.bookmarked .bookmark-indicator{opacity:1}
+
+/* ============ 移动端底部工具栏 (默认隐藏，移动端显示) ============ */
+.mobile-bottom-bar{
+  display:none;
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  height:var(--mobile-bottom-bar1-height);
+  background:rgba(12,20,49,.98);
+  border-top:1px solid rgba(255,255,255,.08);
+  align-items:center;
+  justify-content:space-around;
+  z-index:var(--z-mobile-bar);
+  padding:0 12px;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+.mobile-bottom-bar .mb-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;width:60px;height:50px;color:#9fb4d8;cursor:pointer;transition:color .15s}
+.mobile-bottom-bar .mb-btn:hover,.mobile-bottom-bar .mb-btn.active{color:#7c5dfc}
+.mobile-bottom-bar .mb-btn i{font-size:18px;margin-bottom:3px}
+.mobile-bottom-bar .mb-btn span{font-size:10px}
+
+.mobile-bottom-bar-2{
+  display:none;
+  position:fixed;
+  bottom:var(--mobile-bottom-bar1-height);
+  left:0;
+  right:0;
+  height:var(--mobile-bottom-bar2-height);
+  background:rgba(12,20,49,.95);
+  border-top:1px solid rgba(255,255,255,.06);
+  align-items:center;
+  justify-content:space-around;
+  z-index:calc(var(--z-mobile-bar) - 1);
+  padding:0 12px;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+.mobile-bottom-bar-2 .mb-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;width:60px;height:44px;color:#9fb4d8;cursor:pointer;transition:color .15s}
+.mobile-bottom-bar-2 .mb-btn:hover,.mobile-bottom-bar-2 .mb-btn.active{color:#7c5dfc}
+.mobile-bottom-bar-2 .mb-btn i{font-size:16px;margin-bottom:2px}
+.mobile-bottom-bar-2 .mb-btn span{font-size:9px}
+
+/* ============ 移动端侧边栏遮罩 ============ */
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:calc(var(--z-sidebar) - 1)}
+.sidebar-backdrop.show{display:block}
+
+/* ============ 浮动侧边栏切换按钮 (仅移动端) ============ */
+.sidebar-float-toggle{
+  display:none;
+  position:fixed;
+  left:12px;
+  bottom:calc(var(--mobile-bottom-bar1-height) + 12px);
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#7c5dfc,#5b3de8);
+  color:#fff;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:180;
+  font-size:18px;
+  box-shadow:0 8px 24px rgba(124,93,252,.4);
+  transition:transform .15s;
+}
+.sidebar-float-toggle:hover{transform:scale(1.08)}
+.sidebar-float-toggle.hide{display:none!important}
+
+/* ============ 响应式设计 - 平板电脑 (768px - 1024px) ============ */
+@media(max-width:1024px){
+  :root{--sidebar-width:240px;--thumb-panel-width:180px}
+  .top-bar{padding:0 16px;gap:12px}
+  .top-bar .logo{font-size:15px}
+  .top-bar .logo span{font-size:11px}
+  .preview-body{padding:16px}
+  .preview-toolbar{padding:0 14px;gap:6px}
+  .tbtn{width:34px;height:34px;font-size:12px}
+  .tree-label{padding:8px 10px;font-size:12px}
+  .tree-arrow{width:14px;height:14px}
+  .tree-icon{width:16px;height:16px;font-size:12px}
+  .tree-name{font-size:12px}
+}
+
+/* ============ 响应式设计 - 大手机/平板横屏 (481px - 768px) ============ */
+@media(max-width:768px){
+  :root{
+    --top-bar-height:52px;
+    --preview-toolbar-height:48px;
+  }
+  
+  /* 顶部栏调整 - 单行布局，防止换行 */
+  .top-bar{padding:0 12px;gap:10px;flex-wrap:nowrap;overflow-x:auto}
+  .top-bar .logo{font-size:14px;gap:6px;min-width:auto}
+  .top-bar .logo i{font-size:18px}
+  .top-bar .logo span{display:none}
+  .menu-toggle{display:flex;width:36px;height:36px;font-size:14px}
+  .search-global{flex:1;min-width:0;max-width:100%}
+  .search-global input{padding:8px 12px 8px 34px;font-size:13px}
+  .search-global i{left:11px;font-size:12px}
+  .user-area .avatar{width:32px;height:32px;font-size:13px}
+  
+  /* 主区域改为单列 - 侧边栏变抽屉式 */
+  .main{flex-direction:row;position:relative}
+  
+  /* 侧边栏 - 固定定位抽屉式 */
+  .sidebar{
+    position:fixed;
+    left:0;
+    top:var(--top-bar-height);
+    bottom:calc(var(--mobile-bottom-bar1-height) + var(--mobile-bottom-bar2-height));
+    width:85%;
+    max-width:320px;
+    min-width:0;
+    z-index:var(--z-sidebar);
+    transform:translateX(-100%);
+    transition:transform .3s cubic-bezier(.4,0,.2,1);
+    box-shadow:8px 0 30px rgba(0,0,0,.35);
+    border-right:1px solid rgba(255,255,255,.08);
+  }
+  .sidebar.hidden{width:85%;min-width:0;transform:translateX(-100%)}
+  .sidebar.mobile-open{transform:translateX(0)}
+  .sidebar .tree-wrap{height:100%}
+  
+  /* 隐藏缩略图面板 */
+  .thumb-panel{display:none}
+  .splitter-v{display:none}
+  
+  /* 预览区域 - 占满剩余空间 */
+  .preview-area{flex:1;border-radius:0}
+  
+  /* 预览工具栏 - 固定在顶部栏下方 */
+  .preview-toolbar{
+    position:fixed;
+    top:var(--top-bar-height);
+    left:0;
+    right:0;
+    z-index:var(--z-toolbar);
+    padding:0 10px;
+    gap:4px;
+    height:var(--preview-toolbar-height);
+    background:rgba(12,20,49,.98);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+  }
+  .preview-toolbar .tool-group{gap:4px}
+  .tbtn{width:30px;height:30px;border-radius:8px;font-size:12px}
+  .page-info{font-size:11px;gap:4px}
+  .page-info input{width:36px;padding:5px;font-size:11px}
+  .zoom-info{font-size:11px;min-width:42px}
+  
+  /* 预览内容区 - 为工具栏和底部栏留出空间 */
+  .preview-body{
+    padding-top:calc(var(--preview-toolbar-height) + 8px);
+    padding-bottom:calc(var(--mobile-bottom-bar1-height) + var(--mobile-bottom-bar2-height) + 8px);
+    padding-left:8px;
+    padding-right:8px;
+  }
+  
+  /* 树形结构触摸优化 */
+  .tree-label{padding:11px 14px!important;min-height:44px;font-size:14px}
+  .tree-arrow{width:22px;height:22px;font-size:13px}
+  .tree-icon{width:22px;height:22px;font-size:16px}
+  .tree-name{font-size:14px;line-height:1.5}
+  .tree-count{font-size:11px;padding:3px 10px}
+  .tree-children::before{left:28px}
+  .tree-node.level-2>.tree-label{padding-left:34px!important}
+  .tree-node.level-3>.tree-label{padding-left:52px!important}
+  
+  /* 状态栏隐藏 */
+  .status-bar{display:none}
+  
+  /* 移动端底部栏显示 */
+  .mobile-bottom-bar{display:flex}
+  .mobile-bottom-bar-2{display:flex}
+  
+  /* 浮动侧边栏按钮 */
+  .sidebar-float-toggle{display:flex}
+  
+  /* Toast位置调整 */
+  .toast{bottom:calc(var(--mobile-bottom-bar1-height) + 20px);right:20px;left:20px;max-width:none;text-align:center}
+}
+
+/* ============ 响应式设计 - 手机 (<= 480px) ============ */
+@media(max-width:480px){
+  :root{
+    --top-bar-height:50px;
+    --preview-toolbar-height:44px;
+  }
+  
+  .top-bar{padding:0 10px;gap:8px}
+  .top-bar .logo{font-size:13px}
+  .search-global input{padding:7px 10px 7px 32px;font-size:12px}
+  .user-area{display:none}
+  .menu-toggle{width:34px;height:34px;font-size:13px}
+  
+  .sidebar{width:92%;max-width:100%}
+  
+  .preview-toolbar{padding:0 8px;gap:3px}
+  .tbtn{width:28px;height:28px;border-radius:7px;font-size:11px}
+  .tool-sep{height:20px;margin:0 2px}
+  .page-info{font-size:10px}
+  .page-info input{width:32px;padding:4px;font-size:10px}
+  .zoom-info{font-size:10px;min-width:38px}
+  
+  /* 底部栏紧凑化 */
+  .mobile-bottom-bar{padding:0 8px;gap:4px}
+  .mobile-bottom-bar .mb-btn{width:52px;height:48px}
+  .mobile-bottom-bar .mb-btn i{font-size:16px}
+  .mobile-bottom-bar .mb-btn span{font-size:9px}
+  .mobile-bottom-bar-2{padding:0 8px;gap:4px}
+  .mobile-bottom-bar-2 .mb-btn{width:52px;height:42px}
+  .mobile-bottom-bar-2 .mb-btn i{font-size:14px}
+  .mobile-bottom-bar-2 .mb-btn span{font-size:9px}
+  
+  /* 树形结构进一步优化触摸 */
+  .tree-label{padding:12px 12px!important;min-height:46px;font-size:14px}
+  .tree-node.level-2>.tree-label{padding-left:38px!important}
+  .tree-node.level-3>.tree-label{padding-left:58px!important}
+  .tree-children::before{left:32px}
+  
+  /* 浮动按钮位置调整 */
+  .sidebar-float-toggle{width:42px;height:42px;font-size:16px}
+}
+
+/* ============ 超小屏幕 (<= 360px) ============ */
+@media(max-width:360px){
+  .mobile-bottom-bar .mb-btn{width:46px}
+  .mobile-bottom-bar-2 .mb-btn{width:46px}
+  .preview-toolbar .tool-group{gap:3px}
+  .tbtn{width:26px;height:26px;font-size:10px}
+}
+
+/* ============ 高分屏/大屏优化 (>= 1440px) ============ */
+@media(min-width:1440px){
+  :root{--sidebar-width:320px;--thumb-panel-width:260px}
+  .top-bar{padding:0 28px;gap:20px}
+  .top-bar .logo{font-size:18px}
+  .top-bar .logo span{font-size:13px}
+  .preview-toolbar{padding:0 22px;gap:10px}
+  .tbtn{width:40px;height:40px;font-size:14px}
+  .tree-label{padding:11px 14px;font-size:14px;min-height:42px}
+  .tree-name{font-size:14px}
+  .preview-body{padding:28px}
+}
+
+/* ============ 横屏模式优化 (高宽比 < 1) ============ */
+@media(max-height:500px) and (orientation:landscape){
+  :root{
+    --top-bar-height:44px;
+    --preview-toolbar-height:40px;
+    --mobile-bottom-bar1-height:48px;
+    --mobile-bottom-bar2-height:44px;
+  }
+  .tree-label{padding:7px 10px!important;min-height:34px;font-size:12px}
+  .tree-name{font-size:12px}
+  .sidebar-header{padding:10px 14px 6px}
+  .search-box{padding:0 12px 8px}
+}
+</style>
+<script>
+// URL.parse polyfill for older browsers (Node.js API not available in browsers)
+if (typeof URL.parse !== 'function') {
+  URL.parse = function(url, base) {
+    try {
+      const parsed = new URL(url, base || window.location.href);
+      return {
+        href: parsed.href,
+        protocol: parsed.protocol,
+        host: parsed.host,
+        hostname: parsed.hostname,
+        port: parsed.port,
+        pathname: parsed.pathname,
+        search: parsed.search,
+        hash: parsed.hash,
+        origin: parsed.origin,
+        query: parsed.search.slice(1) || ''
+      };
+    } catch (e) {
+      console.warn('URL.parse polyfill failed:', e);
+      return null;
+    }
+  };
+}
+</script>
+<script src="context-menu.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js" onload="console.log('PDF.js loaded successfully')" onerror="console.error('PDF.js CDN load failed')"></script>
+<script>
+let pdfjsLoaded = false;
+window.addEventListener('load', () => {
+  if (typeof pdfjsLib !== 'undefined') {
+    pdfjsLoaded = true;
+    // PDF.js configuration for iOS Safari compatibility
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const isMobile = 'ontouchstart' in window || navigator.userAgent.match(/(iPhone|iPad|iPod|Android)/);
+    
+    if (isIOS) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = '';
+      console.log('PDF.js: Worker disabled for iOS Safari');
+    } else if (isMobile) {
+      try {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = '';
+      } catch(e) {
+        console.warn('PDF.js worker disabled for mobile');
+      }
+    } else {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+    }
+    
+    // iOS Safari specific fixes
+    if (isIOS) {
+      pdfjsLib.disableWorker = true;
+    }
+  }
+});
+</script>
+</head>
+<body>
+<div class="container">
+  <header class="top-bar">
+    <button class="menu-toggle" onclick="toggleSidebar()" title="菜单"><i class="fas fa-bars"></i></button>
+    <div class="logo"><i class="fas fa-school"></i> 中国教材电子课本 <span>可视化教材浏览</span></div>
+    <div class="search-global">
+      <i class="fas fa-search"></i>
+      <input id="globalSearch" type="text" placeholder="搜索教材名称、学科、版本..." oninput="onSearch(this.value)">
+    </div>
+    <div class="user-area">
+      <button class="tbtn" onclick="toggleShortcuts()" title="快捷键"><i class="fas fa-keyboard"></i></button>
+      <button class="tbtn" onclick="showTokenModal()" title="Token设置"><i class="fas fa-key"></i></button>
+      <div class="avatar">U</div>
+    </div>
+  </header>
+  <section class="main">
+    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h3><i class="fas fa-folder-tree"></i> 教材目录</h3>
+        <span class="count" id="catalogCount">加载中</span>
+      </div>
+      <div class="search-box">
+        <input id="treeSearch" type="text" placeholder="筛选目录..." oninput="onSearch(this.value)">
+      </div>
+      <div class="tree-wrap" id="treeWrap"></div>
+    </aside>
+    <div class="splitter-v"></div>
+    <aside class="thumb-panel" id="thumbPanel">
+      <div class="thumb-header"><i class="fas fa-th-list"></i> 页面缩略图</div>
+      <div class="thumb-list" id="thumbList">
+        <div class="empty-state" style="height:180px"><i class="fas fa-file-pdf"></i><p>选择教材后显示页面缩略图</p></div>
+      </div>
+    </aside>
+    <div class="splitter-v"></div>
+    <main class="preview-area">
+      <div class="preview-toolbar">
+        <div class="tool-group">
+          <button class="tbtn" onclick="activateTool('annotate')" id="btnAnnotate" title="标注"><i class="fas fa-highlighter"></i></button>
+          <button class="tbtn" onclick="activateTool('pen')" id="btnPen" title="画笔"><i class="fas fa-pen"></i></button>
+          <button class="tbtn" onclick="activateTool('text')" id="btnText" title="文字"><i class="fas fa-font"></i></button>
+          <button class="tbtn" onclick="activateTool('eraser')" id="btnEraser" title="橡皮擦"><i class="fas fa-eraser"></i></button>
+          <div class="color-picker-wrap">
+            <button class="tbtn color-btn" id="colorPicker" onclick="toggleColorPicker()" title="选择颜色" style="padding:0;width:38px">
+              <div id="currentColor" style="width:100%;height:100%;border-radius:12px;background:#ff7f50"></div>
+            </button>
+            <div id="colorPalette" class="color-palette" style="display:none">
+              <div class="color-row">
+                <span class="color-item" style="background:#ff7f50" onclick="setColor('#ff7f50')"></span>
+                <span class="color-item" style="background:#ffd966" onclick="setColor('#ffd966')"></span>
+                <span class="color-item" style="background:#7bed9f" onclick="setColor('#7bed9f')"></span>
+                <span class="color-item" style="background:#70a1ff" onclick="setColor('#70a1ff')"></span>
+                <span class="color-item" style="background:#a29bfe" onclick="setColor('#a29bfe')"></span>
+              </div>
+              <div class="color-row">
+                <span class="color-item" style="background:#ff6b6b" onclick="setColor('#ff6b6b')"></span>
+                <span class="color-item" style="background:#fd79a8" onclick="setColor('#fd79a8')"></span>
+                <span class="color-item" style="background:#00cec9" onclick="setColor('#00cec9')"></span>
+                <span class="color-item" style="background:#6c5ce7" onclick="setColor('#6c5ce7')"></span>
+                <span class="color-item" style="background:#ffffff" onclick="setColor('#ffffff')"></span>
+              </div>
+              <div class="color-row">
+                <span class="color-item" style="background:#2d3436" onclick="setColor('#2d3436')"></span>
+                <span class="color-item" style="background:#636e72" onclick="setColor('#636e72')"></span>
+                <span class="color-item" style="background:#b2bec3" onclick="setColor('#b2bec3')"></span>
+                <span class="color-item" style="background:#fdcb6e" onclick="setColor('#fdcb6e')"></span>
+                <span class="color-item" style="background:#e17055" onclick="setColor('#e17055')"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tool-group">
+          <button class="tbtn" onclick="undoAction()" title="撤销"><i class="fas fa-undo"></i></button>
+          <button class="tbtn" onclick="redoAction()" title="重做"><i class="fas fa-redo"></i></button>
+          <button class="tbtn" onclick="clearAllAnnotations()" title="清除所有标注"><i class="fas fa-trash"></i></button>
+        </div>
+        <div class="tool-sep"></div>
+        <div class="tool-group">
+          <button class="tbtn" onclick="zoomOut()" title="缩小 (−)"><i class="fas fa-search-minus"></i></button>
+          <span class="zoom-info" id="zoomInfo">100%</span>
+          <button class="tbtn" onclick="zoomIn()" title="放大 (+)"><i class="fas fa-search-plus"></i></button>
+          <button class="tbtn" onclick="zoomFit()" title="适应宽度 (0)"><i class="fas fa-expand"></i></button>
+        </div>
+        <div class="tool-sep"></div>
+        <div class="tool-group">
+          <button class="tbtn" onclick="toggleBookmark()" id="btnBookmark" title="书签 (B)"><i class="fas fa-bookmark"></i></button>
+          <button class="tbtn" onclick="toggleFullscreen()" id="btnFullscreen" title="全屏 (F)"><i class="fas fa-expand-arrows-alt"></i></button>
+          <button class="tbtn" onclick="downloadPDF()" title="下载"><i class="fas fa-download"></i></button>
+          <button class="tbtn" onclick="shareDocument()" title="分享"><i class="fas fa-share-alt"></i></button>
+        </div>
+        <div class="page-info">
+          <button class="tbtn" onclick="prevPage()" title="上一页 (←)" style="width:30px;height:30px"><i class="fas fa-chevron-left"></i></button>
+          <span id="pageLabel">-</span>
+          <input id="pageInput" type="number" min="1" value="1" onkeydown="if(event.key==='Enter')goToPage(this.value)">
+          <span>/ <span id="pageTotal">-</span></span>
+          <button class="tbtn" onclick="nextPage()" title="下一页 (→)" style="width:30px;height:30px"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+      <div class="preview-body" id="previewBody">
+        <div class="empty-state" id="emptyState">
+          <i class="fas fa-book-open"></i>
+          <p>请从左侧选择教材进行预览</p>
+          <span style="font-size:12px;color:#6b7db3">支持 PDF 浏览、缩放、标注、书签 · 按 <kbd style="background:rgba(124,93,252,.2);padding:2px 6px;border-radius:4px">?</kbd> 查看快捷键</span>
+        </div>
+        <div id="pdfViewer" class="pdf-viewer" style="display:none">
+          <div class="pdf-canvas-wrap" id="pdfCanvasWrap">
+            <canvas id="pdfCanvas"></canvas>
+            <canvas id="annotationCanvas" class="annotation-canvas"></canvas>
+          </div>
+        </div>
+        <div class="loading-overlay" id="loadingOverlay">
+          <div class="loading-spinner"></div>
+          <div class="loading-text" id="loadingText">正在加载 PDF...</div>
+        </div>
+      </div>
+    </main>
+  </section>
+  <footer class="status-bar">
+    <span id="statusFile">未选择文件</span>
+    <span id="statusSize"></span>
+    <span id="statusZoom"></span>
+    <span id="statusBookmark"></span>
+    <span style="margin-left:auto" id="statusToken">免费用户</span>
+  </footer>
+  <!-- Mobile Bottom Bar -->
+  <div class="mobile-bottom-bar" id="mobileBottomBar">
+    <div class="mb-btn" onclick="firstPage()" title="首页"><i class="fas fa-angle-double-left"></i><span>首页</span></div>
+    <div class="mb-btn" onclick="prevPage()" title="上一页"><i class="fas fa-angle-left"></i><span>上页</span></div>
+    <div class="mb-btn" onclick="toggleSidebar()" title="目录"><i class="fas fa-folder-tree"></i><span>目录</span></div>
+    <div class="mb-btn" onclick="nextPage()" title="下一页"><i class="fas fa-angle-right"></i><span>下页</span></div>
+    <div class="mb-btn" onclick="lastPage()" title="末页"><i class="fas fa-angle-double-right"></i><span>末页</span></div>
+  </div>
+  <div class="mobile-bottom-bar-2" id="mobileBottomBar2">
+    <div class="mb-btn" onclick="zoomOut()" title="缩小"><i class="fas fa-search-minus"></i><span>缩小</span></div>
+    <div class="mb-btn" onclick="zoomFit()" title="适应"><i class="fas fa-expand"></i><span>适应</span></div>
+    <div class="mb-btn" onclick="zoomIn()" title="放大"><i class="fas fa-search-plus"></i><span>放大</span></div>
+    <div class="mb-btn" onclick="toggleBookmark()" title="书签"><i class="fas fa-bookmark"></i><span>书签</span></div>
+    <div class="mb-btn" onclick="toggleAnnotationTool()" title="标记"><i class="fas fa-pencil-alt"></i><span>标记</span></div>
+  </div>
+</div>
+<div class="modal-bg" id="tokenModal">
+  <div class="modal-box">
+    <h3><i class="fas fa-key"></i> 会员 Token</h3>
+    <p>请输入 Token 后可解锁更多功能，支持 PRE_高级 或 BASIC_基础 token。</p>
+    <input id="tokenInput" type="text" placeholder="输入 Token (如 PRE_高级/BASIC_基础)" onkeydown="if(event.key==='Enter')submitToken()">
+    <div class="modal-btns">
+      <button class="mbtn mbtn-cancel" onclick="closeModal()">取消</button>
+      <button class="mbtn mbtn-ok" onclick="submitToken()">确认</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<div class="shortcut-hint" id="shortcutHint">
+  <h4><i class="fas fa-keyboard"></i> 快捷键</h4>
+  <div><span>上一页</span><kbd>←</kbd> <kbd>PgUp</kbd></div>
+  <div><span>下一页</span><kbd>→</kbd> <kbd>PgDn</kbd> <kbd>Space</kbd></div>
+  <div><span>第一页</span><kbd>Home</kbd></div>
+  <div><span>最后一页</span><kbd>End</kbd></div>
+  <div><span>放大</span><kbd>+</kbd></div>
+  <div><span>缩小</span><kbd>-</kbd></div>
+  <div><span>适应宽度</span><kbd>0</kbd></div>
+  <div><span>全屏</span><kbd>F</kbd></div>
+  <div><span>书签</span><kbd>B</kbd></div>
+  <div><span>目录</span><kbd>T</kbd></div>
+  <div><span>搜索</span><kbd>/</kbd></div>
+  <div><span>跳转页码</span><kbd>G</kbd></div>
+  <div><span>快捷键帮助</span><kbd>?</kbd></div>
+  <div><span>退出全屏</span><kbd>Esc</kbd></div>
+  <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);font-size:11px;color:#8f98c8;">
+    提示：数字键 1-9 可快速跳转到第 n×10 页
+  </div>
+  <div style="margin-top:8px;font-size:11px;color:#8f98c8;">
+    Ctrl/Cmd 组合键：F搜索、B书签、T目录、M全屏
+  </div>
+</div>
+<button class="sidebar-float-toggle" id="sidebarFloatToggle" onclick="toggleSidebar()" title="打开目录"><i class="fas fa-folder-tree"></i></button>
+
+<!-- 右键菜单 -->
+<div id="contextMenu" style="position:fixed;display:none;z-index:9999;min-width:200px;max-height:80vh;overflow-y:auto;background:rgba(20,30,60,.98);border:1px solid rgba(255,255,255,.1);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.3);backdrop-filter:blur(12px);padding:8px 0;">
+  <!-- 缩放 -->
+  <div onclick="contextMenuAction('zoomIn')" style="padding:10px 16px;cursor:pointer;color:#d4dbf0;font-size:13px;transition:background .2s;display:flex;align-items:center;gap:10px;" onmouseover="this.style.background='rgba(124,93,252,.2)'" onmouseout="this.style.background='transparent'">
+    <i class="fas fa-search-plus" style="width:16px;color:#7c5dfc"></i> 放大 <span style="margin-left:auto;color:#8f98c8;font-size:11px;">+</span>
+  </div>
+  <div onclick="contextMenuAction('zoomOut')" style="padding:10px 16px;cursor:pointer;color:#d4dbf0;font-size:13px;transition:background .2s;display:flex;align-items:center;gap:10px;" onmouseover="this.style.background='rgba(124,93,252,.2)'" onmouseout="this.style.background='transparent'">
+    <i class="fas fa-search-minus" style="width:16px;color:#7c5dfc"></i> 缩小 <span style="margin-left:auto;color:#8f98c8;font-size:11px;">-</span>
+  </div>
+  <div onclick="contextMenuAction('zoomFit')" style="padding:10px 16px;cursor:pointer;color:#d4dbf0;font-size:13px;transition:background .2s;display:flex;align-items:center;gap:10px;" onmouseover="this.style.background='rgba(124,93,252,.2)'" onmouseout="this.style.background='transparent'">
+    <i class="fas fa-expand" style="width:16px;color:#7c5dfc"></i> 适应宽度 <span style="margin-left:auto;color:#8f98c8;font-size:11px;">0</span>
+  </div>
+  <div style="height:1px;background:rgba(255,255,255,.1);margin:4px 16px;"></div>
+  <!-- 翻页 -->
+  <div onclick="contextMenuAction('prevPage')" style="padding:10px 16px;cursor:pointer;color:#d4dbf0;font-size:13px;transition:background .2s;display:flex;align-items:center;gap:10px;" onmouseover="this.style.background='rgba(124,93,252,.2)'" onmouseout="this.style.background='transparent'">
+    <i class="fas fa-chevron-left" style="width:16px;color:#7c5dfc"></i> 上一页 <span style="margin-left:auto;color:#8f98c8;font-size:11px;">← / PgUp</span>
+  </div>
+  <div onclick="contextMenuAction('nextPage')" style="padding:10px 16px;cursor:pointer;color:#d4dbf0;font-size:13px;transition:background .2s;display:flex;align-items:center;gap:10px;" onmouseover="this.style.background='rgba(124,93,252,.2)'" onmouseout="this.style.background='transparent'">
+    <i class="fas fa-chevron-right" style="width:16px;color:#7c5dfc"></i> 下一页 <span style="margin-left:auto;color:#8f98c8;font-size:11px;">→ / PgDn</span>
+  </div>
+  <div onclick="contextMenuAction('firstPage')" style="padding:10px 16px;cursor:pointer;color:#d4dbf0;font-size:13px;transition:background .2s;display:flex;align-items:center;gap:10px;" onmouseover="this.style.background='rgba(124,93,252,.2)'" onmouseout="this.style.background='transparent'">
+    <i class="fas fa-angle-double-left" style="width:16px;color:#7c5dfc"></i> 第一页 <span style="margin-left:auto;color:#8f98c8;font-size:11px;">Home</span>
+  </div>
+  <div onclick="contextMenuAction('lastPage')" style="padding:10px 16px;cursor:pointer;color:#d4dbf0;font-size:13px;transition:background .2s;display:flex;align-items:center;gap:10px;" onmouseover="this.style.background='rgba(124,93,252,.2)'" onmouseout="this.style.background='transparent'">
+    <i class="fas fa-angle-double-right" style="width:16px;color:#7c5dfc"></i> 最后一页 <span style="margin-left:auto;color:#8f98c8;font-size:11px;">End</span>
+  </div>
+  <div onclick="contextMenuAction('goToPage')" style="padding:10px 16px;cursor:pointer;color:#d4dbf0;font-size:13px;transition:background .2s;display:flex;align-items:center;gap:10px;" onmouseover="this.style.background='rgba(124,93,252,.2)'" onmouseout="this.style.background='transparent'">
+    <i class="fas fa-arrow-circle-right" style="width:16px;color:#7c5dfc"></i> 跳转到页 <span style="margin-left:auto;color:#8f98c8;font-size:11px;">G</span>
+  </div>
+  <div style="height:1px;background:rgba(255,255,255,.1);margin:4px 16px;"></div>
+  <!-- 功能 -->
+  <div onclick="contextMenuAction('toggleBookmark')" style="padding:10px 16px;cursor:pointer;color:#d4dbf0;font-size:13px;transition:background .2s;display:flex;align-items:center;gap:10px;" onmouseover="this.style.background='rgba(124,93,252,.2)'" onmouseout="this.style.background='transparent'">
+    <i class="fas fa-bookmark" style="width:16px;color:#7c5dfc"></i> 书签 <span style="margin-left:auto;color:#8f98c8;font-size:11px;">B</span>
+  </div>
+  <div onclick="contextMenuAction('fullscreen')" style="padding:10px 16px;cursor:pointer;color:#d4dbf0;font-size:13px;transition:background .2s;display:flex;align-items:center;gap:10px;" onmouseover="this.style.background='rgba(124,93,252,.2)'" onmouseout="this.style.background='transparent'">
+    <i class="fas fa-expand-arrows-alt" style="width:16px;color:#7c5dfc"></i> 全屏 <span style="margin-left:auto;color:#8f98c8;font-size:11px;">F</span>
+  </div>
+  <div onclick="contextMenuAction('toggleSidebar')" style="padding:10px 16px;cursor:pointer;color:#d4dbf0;font-size:13px;transition:background .2s;display:flex;align-items:center;gap:10px;" onmouseover="this.style.background='rgba(124,93,252,.2)'" onmouseout="this.style.background='transparent'">
+    <i class="fas fa-folder-tree" style="width:16px;color:#7c5dfc"></i> 目录 <span style="margin-left:auto;color:#8f98c8;font-size:11px;">T</span>
+  </div>
+  <div onclick="contextMenuAction('search')" style="padding:10px 16px;cursor:pointer;color:#d4dbf0;font-size:13px;transition:background .2s;display:flex;align-items:center;gap:10px;" onmouseover="this.style.background='rgba(124,93,252,.2)'" onmouseout="this.style.background='transparent'">
+    <i class="fas fa-search" style="width:16px;color:#7c5dfc"></i> 搜索教材 <span style="margin-left:auto;color:#8f98c8;font-size:11px;">/</span>
+  </div>
+  <div style="height:1px;background:rgba(255,255,255,.1);margin:4px 16px;"></div>
+  <!-- 快速跳转 -->
+  <div style="padding:8px 16px;color:#8f98c8;font-size:11px;user-select:none;">快速跳转 (数字键)</div>
+  <div onclick="contextMenuAction('jump10')" style="padding:8px 16px;cursor:pointer;color:#d4dbf0;font-size:12px;transition:background .2s;" onmouseover="this.style.background='rgba(124,93,252,.2)'" onmouseout="this.style.background='transparent'">第 10 页 <span style="float:right;color:#8f98c8;font-size:10px;">1</span></div>
+  <div onclick="contextMenuAction('jump20')" style="padding:8px 16px;cursor:pointer;color:#d4dbf0;font-size:12px;transition:background .2s;" onmouseover="this.style.background='rgba(124,93,252,.2)'" onmouseout="this.style.background='transparent'">第 20 页 <span style="float:right;color:#8f98c8;font-size:10px;">2</span></div>
+  <div onclick="contextMenuAction('jump30')" style="padding:8px 16px;cursor:pointer;color:#d4dbf0;font-size:12px;transition:background .2s;" onmouseover="this.style.background='rgba(124,93,252,.2)'" onmouseout="this.style.background='transparent'">第 30 页 <span style="float:right;color:#8f98c8;font-size:10px;">3</span></div>
+  <div onclick="contextMenuAction('jump40')" style="padding:8px 16px;cursor:pointer;color:#d4dbf0;font-size:12px;transition:background .2s;" onmouseover="this.style.background='rgba(124,93,252,.2)'" onmouseout="this.style.background='transparent'">第 40 页 <span style="float:right;color:#8f98c8;font-size:10px;">4</span></div>
+  <div onclick="contextMenuAction('jump50')" style="padding:8px 16px;cursor:pointer;color:#d4dbf0;font-size:12px;transition:background .2s;" onmouseover="this.style.background='rgba(124,93,252,.2)'" onmouseout="this.style.background='transparent'">第 50 页 <span style="float:right;color:#8f98c8;font-size:10px;">5</span></div>
+  <div style="height:1px;background:rgba(255,255,255,.1);margin:4px 16px;"></div>
+  <!-- 帮助 -->
+  <div onclick="contextMenuAction('help')" style="padding:10px 16px;cursor:pointer;color:#d4dbf0;font-size:13px;transition:background .2s;display:flex;align-items:center;gap:10px;" onmouseover="this.style.background='rgba(124,93,252,.2)'" onmouseout="this.style.background='transparent'">
+    <i class="fas fa-keyboard" style="width:16px;color:#7c5dfc"></i> 快捷键帮助 <span style="margin-left:auto;color:#8f98c8;font-size:11px;">?</span>
+  </div>
+</div>
+
+<script>
+// === State ===
+let catalog = [];
+const treeWrap = document.getElementById('treeWrap');
+const thumbList = document.getElementById('thumbList');
+const emptyState = document.getElementById('emptyState');
+const pdfViewer = document.getElementById('pdfViewer');
+const pdfCanvasWrap = document.getElementById('pdfCanvasWrap');
+const pdfCanvas = document.getElementById('pdfCanvas');
+const annotationCanvas = document.getElementById('annotationCanvas');
+const pdfCtx = pdfCanvas.getContext('2d');
+const annCtx = annotationCanvas.getContext('2d');
+const statusFile = document.getElementById('statusFile');
+const statusSize = document.getElementById('statusSize');
+const statusZoom = document.getElementById('statusZoom');
+const statusToken = document.getElementById('statusToken');
+const statusBookmark = document.getElementById('statusBookmark');
+const zoomInfo = document.getElementById('zoomInfo');
+const pageLabel = document.getElementById('pageLabel');
+const pageTotal = document.getElementById('pageTotal');
+const pageInput = document.getElementById('pageInput');
+const catalogCount = document.getElementById('catalogCount');
+const loadingOverlay = document.getElementById('loadingOverlay');
+const loadingText = document.getElementById('loadingText');
+
+let current = null;
+let activeTool = null;
+let pdfDoc = null;
+let currentPage = 1;
+let pdfScale = 1;
+let historyStack = [];
+let futureStack = [];
+let annotationActions = [];
+let drawing = false;
+let currentStroke = null;
+let thumbObserver = null;
+
+// === Annotations Storage ===
+function getAnnotationKey() {
+  return current?.pdf ? `ct_ann_${encodeURIComponent(current.pdf)}` : null;
+}
+function saveAnnotations() {
+  const key = getAnnotationKey();
+  if (!key) return;
+  localStorage.setItem(key, JSON.stringify(annotationActions));
+}
+function loadAnnotations() {
+  const key = getAnnotationKey();
+  if (!key) { annotationActions = []; return; }
+  try { annotationActions = JSON.parse(localStorage.getItem(key) || '[]'); } catch { annotationActions = []; }
+}
+
+// === Bookmark ===
+function getBookmarkKey(pdf) {
+  return `ct_bm_${encodeURIComponent(pdf || current?.pdf || '')}`;
+}
+function toggleBookmark() {
+  if (!current || !pdfDoc) { showToast('请先选择教材'); return; }
+  const key = getBookmarkKey();
+  const existing = localStorage.getItem(key);
+  if (existing) {
+    localStorage.removeItem(key);
+    statusBookmark.textContent = '';
+    showToast('书签已移除');
+  } else {
+    localStorage.setItem(key, JSON.stringify({ page: currentPage, title: current.title }));
+    statusBookmark.textContent = `📖 第${currentPage}页`;
+    showToast(`已保存书签：第 ${currentPage} 页`);
+  }
+  updateThumbBookmarks();
+}
+function loadBookmark() {
+  if (!current) return null;
+  const key = getBookmarkKey();
+  try {
+    const bm = JSON.parse(localStorage.getItem(key));
+    if (bm?.page) {
+      statusBookmark.textContent = `📖 第${bm.page}页`;
+      return bm.page;
+    }
+  } catch {}
+  statusBookmark.textContent = '';
+  return null;
+}
+function updateThumbBookmarks() {
+  if (!current) return;
+  const key = getBookmarkKey();
+  let bmPage = null;
+  try { bmPage = JSON.parse(localStorage.getItem(key))?.page; } catch {}
+  document.querySelectorAll('.thumb-item').forEach(el => {
+    el.classList.toggle('bookmarked', Number(el.dataset.page) === bmPage);
+  });
+}
+
+// === Tree Rendering (Windows Explorer Style) ===
+function renderTree(list) {
+  treeWrap.innerHTML = '';
+  catalogCount.textContent = flattenCount(list);
+  if (!list?.length) {
+    treeWrap.innerHTML = '<div class="empty-state" style="margin:14px 18px 0"><p>没有匹配的教材，请调整搜索关键词。</p></div>';
+    return;
+  }
+  const frag = document.createDocumentFragment();
+  list.forEach(l1 => {
+    const node1 = createTreeNode(l1.label, 1, l1.children?.length || 0);
+    const ch1 = document.createElement('div');
+    ch1.className = 'tree-children open'; // 默认展开一级目录
+    
+    (l1.children || []).forEach(l2 => {
+      const node2 = createTreeNode(l2.label, 2, l2.children?.length || 0);
+      const ch2 = document.createElement('div');
+      ch2.className = 'tree-children';
+      
+      (l2.children || []).forEach(leaf => {
+        const leafNode = createTreeNode(leaf.title, 3, 0, leaf);
+        ch2.appendChild(leafNode);
+      });
+      
+      node2.appendChild(ch2);
+      // 点击文件夹切换展开
+      node2.querySelector('.tree-label').addEventListener('click', ev => {
+        ev.stopPropagation();
+        toggleChildren(ch2, node2);
+      });
+      ch1.appendChild(node2);
+    });
+    
+    node1.appendChild(ch1);
+    // 点击一级文件夹切换展开
+    node1.querySelector('.tree-label').addEventListener('click', ev => {
+      ev.stopPropagation();
+      toggleChildren(ch1, node1);
+    });
+    frag.appendChild(node1);
+  });
+  treeWrap.appendChild(frag);
+}
+
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+function createTreeNode(name, level, childCount, leafData = null) {
+  const node = document.createElement('div');
+  node.className = `tree-node level-${level}`;
+  
+  const label = document.createElement('div');
+  label.className = 'tree-label';
+  
+  const isFolder = !leafData;
+  const safeName = escapeHtml(name);
+  
+  // 箭头（仅文件夹有）
+  const arrowHtml = isFolder 
+    ? `<div class="tree-arrow ${childCount === 0 ? 'empty' : ''}"><i class="fas fa-chevron-right"></i></div>`
+    : `<div class="tree-arrow empty"></div>`;
+  
+  // 图标
+  const iconClass = isFolder ? `tree-icon folder level-${level}` : 'tree-icon file';
+  const iconFa = isFolder ? 'fa-folder-open' : 'fa-file-pdf';
+  const iconHtml = `<div class="${iconClass}"><i class="fas ${iconFa}"></i></div>`;
+  
+  // 名称
+  const nameHtml = `<div class="tree-name">${safeName}</div>`;
+  
+  // 数量徽章（仅文件夹有且数量>0）
+  const badgeHtml = isFolder && childCount > 0 
+    ? `<div class="tree-count">${childCount}</div>` 
+    : '';
+  
+  label.innerHTML = `${arrowHtml}${iconHtml}${nameHtml}${badgeHtml}`;
+  node.appendChild(label);
+  
+  // 文件点击选择
+  if (leafData) {
+    label.onclick = e => {
+      e.stopPropagation();
+      selectFile(leafData, label);
+    };
+  }
+  
+  return node;
+}
+
+function toggleChildren(container, nodeEl) {
+  const isOpen = container.classList.toggle('open');
+  nodeEl.classList.toggle('expanded', isOpen);
+  const arrow = nodeEl.querySelector('.tree-arrow');
+  if (arrow) {
+    arrow.classList.toggle('rotated', isOpen);
+  }
+  // 切换文件夹图标
+  const icon = nodeEl.querySelector('.tree-icon i');
+  if (icon) {
+    if (isOpen) {
+      icon.classList.remove('fa-folder');
+      icon.classList.add('fa-folder-open');
+    } else {
+      icon.classList.remove('fa-folder-open');
+      icon.classList.add('fa-folder');
+    }
+  }
+}
+
+function flattenCount(list) {
+  let c = 0;
+  (list || []).forEach(l1 => (l1.children || []).forEach(l2 => { c += (l2.children || []).length; }));
+  return c;
+}
+
+// === Catalog Loading & Search ===
+async function loadCatalog() {
+  console.log('loadCatalog: 开始加载目录...');
+  catalogCount.textContent = '加载中...';
+  try {
+    const res = await fetch('catalog.json');
+    console.log('loadCatalog: fetch响应状态:', res.status);
+    if (!res.ok) throw new Error('目录加载失败');
+    catalog = await res.json();
+    console.log('loadCatalog: 目录数据加载成功，条目数:', catalog.length);
+    renderTree(catalog);
+    showToast(`已加载 ${flattenCount(catalog)} 套教材目录`);
+  } catch (e) {
+    console.error('loadCatalog错误:', e);
+    catalogCount.textContent = '加载失败';
+    showToast('教材目录加载失败: ' + e.message);
+    renderTree([]);
+  }
+}
+let _searchTimer = null;
+function onSearch(val) {
+  // Sync both search inputs
+  document.getElementById('globalSearch').value = val || '';
+  document.getElementById('treeSearch').value = val || '';
+  clearTimeout(_searchTimer);
+  _searchTimer = setTimeout(() => {
+    const kw = (val || '').trim().toLowerCase();
+    if (!kw) { renderTree(catalog); return; }
+    renderTree(filterCatalog(catalog, kw));
+  }, 200);
+}
+function filterCatalog(nodes, q) {
+  const out = [];
+  nodes.forEach(n1 => {
+    const c1 = { label: n1.label, children: [] };
+    (n1.children || []).forEach(n2 => {
+      const c2 = { label: n2.label, children: [] };
+      (n2.children || []).forEach(leaf => {
+        if ((leaf.title || '').toLowerCase().includes(q) || (n2.label || '').toLowerCase().includes(q) || (n1.label || '').toLowerCase().includes(q))
+          c2.children.push(leaf);
+      });
+      if (c2.children.length) c1.children.push(c2);
+    });
+    if (c1.children.length) out.push(c1);
+  });
+  return out;
+}
+
+// === File Selection ===
+function selectFile(item, labelEl) {
+  console.log('selectFile called with:', item);
+  if (!item || !item.pdf) {
+    showToast('无效的教材文件');
+    console.error('Invalid item:', item);
+    return;
+  }
+  
+  current = item;
+  document.querySelectorAll('.tree-label.selected').forEach(n => n.classList.remove('selected'));
+  if (labelEl) labelEl.classList.add('selected');
+  statusFile.textContent = item.title;
+  statusSize.textContent = item.size || '';
+  statusZoom.textContent = '';
+  pageLabel.textContent = '-';
+  pageTotal.textContent = '-';
+  pageInput.value = 1;
+  pdfScale = 1;
+  resetHistory();
+  // Close sidebar on mobile
+  if (window.innerWidth <= 760) {
+    document.getElementById('sidebar').classList.remove('mobile-open');
+    document.getElementById('sidebarBackdrop').classList.remove('show');
+    const fb = document.getElementById('sidebarFloatToggle');
+    if (fb) { fb.innerHTML = '<i class="fas fa-folder-tree"></i>'; fb.title = '打开目录'; }
+  }
+  showPreview(item.pdf).then(() => {
+    loadAnnotations();
+    const bmPage = loadBookmark();
+    if (bmPage && bmPage > 1 && bmPage <= (pdfDoc?.numPages || 9999)) {
+      renderPage(bmPage);  // Direct render instead of goToPage to avoid toast spam
+    }
+    drawAnnotations();
+    highlightActiveThumb();
+  }).catch((err) => {
+    console.error('PDF preview failed:', err);
+    showToast('PDF预览失败: ' + (err.message || '未知错误'));
+  });
+}
+
+// === PDF Preview ===
+async function showPreview(src) {
+  console.log('showPreview called with:', src);
+  
+  if (!src) {
+    showToast('PDF地址为空');
+    return;
+  }
+  
+  // 检查PDF.js是否加载
+  if (typeof pdfjsLib === 'undefined') {
+    showToast('PDF查看器正在初始化，请稍候重试');
+    console.error('PDF.js not loaded');
+    
+    // 尝试重新加载PDF.js
+    setTimeout(() => {
+      if (typeof pdfjsLib !== 'undefined') {
+        showPreview(src);
+      }
+    }, 1000);
+    return;
+  }
+  
+  console.log('Loading PDF from:', src);
+  emptyState.style.display = 'none';
+  pdfViewer.style.display = 'block';
+  showLoading('正在加载 PDF...');
+  
+  // 重置缩放和平移
+  pdfScale = 1.0;
+  pdfTranslateX = 0;
+  pdfTranslateY = 0;
+  
+  try {
+    // 验证URL
+    let url;
+    try {
+      url = new URL(src);
+    } catch (e) {
+      throw new Error('无效的PDF地址');
+    }
+    
+    if (!url.protocol.startsWith('http')) {
+      throw new Error('仅支持HTTP/HTTPS协议的PDF文件');
+    }
+    
+    console.log('PDF URL验证通过:', url.href);
+    
+    // iOS Safari 检测
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    
+    // PDF配置 - 针对iOS Safari做特殊优化
+    const pdfConfig = { 
+      url: src, 
+      withCredentials: false,
+      disableFontFace: true,
+      useSystemFonts: true,
+      maxImageSize: 1024,
+      stopAtErrors: false,
+      workerSrc: '',
+      disableWorker: true
+    };
+    
+    console.log('PDF配置:', pdfConfig);
+    
+    // 使用异步方式加载PDF，避免主线程阻塞
+    const loadingTask = pdfjsLib.getDocument(pdfConfig);
+    
+    loadingTask.onProgress = (progress) => {
+      console.log('PDF加载进度:', progress);
+      if (progress && progress.loaded && progress.total) {
+        const percent = Math.round((progress.loaded / progress.total) * 100);
+        loadingText.textContent = `正在加载 PDF... ${percent}%`;
+      }
+    };
+    
+    pdfDoc = await loadingTask.promise;
+    
+    console.log('PDF加载成功，页数:', pdfDoc.numPages);
+    
+    currentPage = 1;
+    const pageCount = pdfDoc.numPages;
+    pageTotal.textContent = pageCount;
+    pageInput.max = pageCount;
+    
+    // 移动端延迟加载缩略图以节省内存
+    if (!isIOS && !('ontouchstart' in window)) {
+      populateThumbs(pageCount);
+    }
+    
+    await renderPage(1);
+    hideLoading();
+    showToast(`PDF 已加载（${pageCount} 页）`);
+  } catch (e) {
+    console.error('PDF加载失败:', e);
+    console.error('错误堆栈:', e.stack);
+    hideLoading();
+    
+    let errorMsg = 'PDF 加载失败';
+    if (e.message) {
+      if (e.message.includes('Missing PDF') || e.message.includes('404')) {
+        errorMsg = 'PDF文件不存在或地址错误';
+      } else if (e.message.includes('CORS') || e.message.includes('Access-Control')) {
+        errorMsg = '跨域访问被拒绝，请检查网络设置';
+      } else if (e.message.includes('network') || e.message.includes('fetch') || e.message.includes('request') || e.message.includes('Failed to fetch')) {
+        errorMsg = '网络错误，请检查网络连接';
+      } else if (e.message.includes('Unexpected server response')) {
+        errorMsg = '服务器响应异常，请稍后重试';
+      } else if (e.message.includes('Invalid PDF') || e.message.includes('Corrupt')) {
+        errorMsg = 'PDF文件损坏或格式不正确';
+      } else if (e.message.includes('Failed to fetch') || e.message.includes('NetworkError')) {
+        errorMsg = '网络请求失败，请检查网络连接或稍后重试';
+      } else {
+        errorMsg = 'PDF加载失败: ' + e.message;
+      }
+    }
+    
+    showToast(errorMsg);
+    pdfViewer.style.display = 'none';
+    emptyState.style.display = 'flex';
+  }
+}
+function showLoading(text) { loadingText.textContent = text || '加载中...'; loadingOverlay.classList.add('show'); }
+function hideLoading() { loadingOverlay.classList.remove('show'); }
+
+async function renderPage(pageNum) {
+  if (!pdfDoc) return;
+  try {
+    const page = await pdfDoc.getPage(pageNum);
+    const viewport = page.getViewport({ scale: pdfScale });
+    const w = viewport.width, h = viewport.height;
+    pdfCanvas.width = w; pdfCanvas.height = h;
+    annotationCanvas.width = w; annotationCanvas.height = h;
+    pdfCanvas.style.width = w + 'px'; pdfCanvas.style.height = h + 'px';
+    annotationCanvas.style.width = w + 'px'; annotationCanvas.style.height = h + 'px';
+    pdfCanvasWrap.style.width = w + 'px'; pdfCanvasWrap.style.height = h + 'px';
+    await page.render({ canvasContext: pdfCtx, viewport }).promise;
+    currentPage = pageNum;
+    pageLabel.textContent = pageNum;
+    pageInput.value = pageNum;
+    pageTotal.textContent = pdfDoc.numPages;
+    updateZoomInfo();
+    drawAnnotations();
+    highlightActiveThumb();
+    updateHash();
+  } catch (e) {
+    console.error('页面渲染失败', pageNum, e);
+    showToast(`第 ${pageNum} 页渲染失败，请尝试刷新`);
+  }
+}
+
+// === Thumbnails with Lazy Loading ===
+function populateThumbs(count) {
+  thumbList.innerHTML = '';
+  if (thumbObserver) { thumbObserver.disconnect(); thumbObserver = null; }
+  if (!count || count < 1) {
+    thumbList.innerHTML = '<div class="empty-state" style="height:180px"><p>无法生成缩略图</p></div>';
+    return;
+  }
+  thumbObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const pg = Number(el.dataset.page);
+        const canvas = el.querySelector('canvas');
+        if (canvas && !canvas.dataset.rendered) {
+          renderThumb(pg, canvas);
+          canvas.dataset.rendered = '1';
+        }
+        thumbObserver.unobserve(el);
+      }
+    });
+  }, { root: thumbList, rootMargin: '200px' });
+
+  const frag = document.createDocumentFragment();
+  for (let i = 1; i <= count; i++) {
+    const item = document.createElement('div');
+    item.className = 'thumb-item';
+    if (i === currentPage) item.classList.add('active');
+    item.dataset.page = i;
+    const thumbCanvas = document.createElement('canvas');
+    thumbCanvas.width = 140; thumbCanvas.height = 192;
+    thumbCanvas.style.cssText = 'display:block;width:100%;height:auto';
+    const numLabel = document.createElement('div');
+    numLabel.className = 'page-num';
+    numLabel.innerHTML = `${i} <span class="bookmark-indicator"><i class="fas fa-bookmark"></i></span>`;
+    item.appendChild(thumbCanvas);
+    item.appendChild(numLabel);
+    item.onclick = () => goToPage(i);
+    frag.appendChild(item);
+    thumbObserver.observe(item);
+  }
+  thumbList.appendChild(frag);
+  updateThumbBookmarks();
+}
+function highlightActiveThumb() {
+  document.querySelectorAll('.thumb-item.active').forEach(el => el.classList.remove('active'));
+  const active = thumbList.querySelector(`.thumb-item[data-page="${currentPage}"]`);
+  if (active) { active.classList.add('active'); active.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+}
+async function renderThumb(pageNum, canvas) {
+  if (!pdfDoc) return;
+  try {
+    const page = await pdfDoc.getPage(pageNum);
+    const viewport = page.getViewport({ scale: 0.15 });
+    canvas.width = viewport.width; canvas.height = viewport.height;
+    await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+  } catch (e) { console.warn('缩略图渲染失败', pageNum, e); }
+}
+
+// === Navigation ===
+function goToPage(n) {
+  if (!pdfDoc) { showToast('请先选择教材'); return; }
+  const page = Math.max(1, Math.min(pdfDoc.numPages, parseInt(n, 10) || 1));
+  pageInput.value = page;
+  renderPage(page);
+}
+function prevPage() { if (currentPage > 1) goToPage(currentPage - 1); }
+function nextPage() { if (pdfDoc && currentPage < pdfDoc.numPages) goToPage(currentPage + 1); }
+
+// === Zoom ===
+function updateZoomInfo() {
+  zoomInfo.textContent = `${Math.round(pdfScale * 100)}%`;
+  statusZoom.textContent = `缩放：${Math.round(pdfScale * 100)}%`;
+}
+function zoomIn() { if (!pdfDoc) return; pdfScale = Math.min(3, +(pdfScale + 0.15).toFixed(2)); renderPage(currentPage); }
+function zoomOut() { if (!pdfDoc) return; pdfScale = Math.max(0.4, +(pdfScale - 0.15).toFixed(2)); renderPage(currentPage); }
+async function zoomFit() {
+  if (!pdfDoc) return;
+  const page = await pdfDoc.getPage(currentPage);
+  const vp = page.getViewport({ scale: 1 });
+  const body = document.getElementById('previewBody');
+  const availW = body.clientWidth - 48;
+  const availH = body.clientHeight - 48;
+  pdfScale = Math.min(2.5, Math.max(0.4, Math.min(availW / vp.width, availH / vp.height)));
+  renderPage(currentPage);
+}
+
+// === Annotation Tools ===
+let currentColor = '#ff7f50';
+
+function toggleColorPicker() {
+  const palette = document.getElementById('colorPalette');
+  palette.style.display = palette.style.display === 'none' ? 'block' : 'none';
+}
+
+function setColor(color) {
+  currentColor = color;
+  document.getElementById('currentColor').style.background = color;
+  document.querySelectorAll('.color-item').forEach(el => el.classList.remove('selected'));
+  document.querySelector(`.color-item[style="background:${color}"]`)?.classList.add('selected');
+  document.getElementById('colorPalette').style.display = 'none';
+  showToast(`已选择颜色`);
+}
+
+// 点击其他地方关闭颜色选择器
+document.addEventListener('click', (e) => {
+  const palette = document.getElementById('colorPalette');
+  const picker = document.getElementById('colorPicker');
+  if (palette && palette.style.display === 'block' && !picker.contains(e.target)) {
+    palette.style.display = 'none';
+  }
+});
+
+function activateTool(tool) {
+  // 取消当前正在进行的绘制
+  if (drawing && currentStroke) {
+    drawing = false;
+    currentStroke = null;
+  }
+  activeTool = activeTool === tool ? null : tool;
+  ['btnAnnotate', 'btnPen', 'btnText', 'btnEraser'].forEach(id => document.getElementById(id).classList.remove('active'));
+  if (activeTool) {
+    document.getElementById(`btn${tool.charAt(0).toUpperCase() + tool.slice(1)}`).classList.add('active');
+    showToast(`${{ annotate: '标注', pen: '画笔', text: '文字', eraser: '橡皮擦' }[tool]} 已激活`);
+  } else {
+    showToast('已取消工具选择');
+  }
+}
+function undoAction() {
+  if (!annotationActions.length) { showToast('暂无可撤销操作'); return; }
+  futureStack.push(annotationActions.pop());
+  saveAnnotations(); drawAnnotations();
+  showToast('已撤销');
+}
+function redoAction() {
+  if (!futureStack.length) { showToast('暂无可重做操作'); return; }
+  annotationActions.push(futureStack.pop());
+  saveAnnotations(); drawAnnotations();
+  showToast('已重做');
+}
+function clearAllAnnotations() {
+  if (!annotationActions.length) { showToast('没有可清除的标注'); return; }
+  if (confirm('确定要清除所有标注吗？此操作无法撤销。')) {
+    resetHistory();
+    saveAnnotations();
+    showToast('所有标注已清除');
+  }
+}
+function attachAnnotationEvents() {
+  annotationCanvas.addEventListener('pointerdown', handlePointerDown);
+  annotationCanvas.addEventListener('pointermove', handlePointerMove);
+  annotationCanvas.addEventListener('pointerup', handlePointerUp);
+  annotationCanvas.addEventListener('pointerleave', handlePointerUp);
+}
+function handlePointerDown(event) {
+  if (!activeTool || !pdfDoc) return;
+  const rect = annotationCanvas.getBoundingClientRect();
+  const x = ((event.clientX - rect.left) / rect.width) * annotationCanvas.width;
+  const y = ((event.clientY - rect.top) / rect.height) * annotationCanvas.height;
+  if (activeTool === 'text') {
+    const text = prompt('请输入文字：', '');
+    if (text) {
+      const action = { type: 'text', page: currentPage, x, y, text, color: currentColor, font: '18px sans-serif' };
+      annotationActions.push(action); historyStack.push(action); futureStack = [];
+      saveAnnotations(); drawAnnotations(); showToast('文字已添加');
+    }
+    return;
+  }
+  drawing = true;
+  const t = activeTool === 'eraser' ? 'eraser' : activeTool === 'annotate' ? 'highlight' : 'pen';
+  // 使用当前颜色，高亮模式添加透明度
+  const strokeColor = t === 'highlight' ? hexToRgba(currentColor, 0.35) : t === 'eraser' ? 'rgba(0,0,0,1)' : currentColor;
+  currentStroke = {
+    type: t, page: currentPage,
+    color: strokeColor,
+    lineWidth: t === 'eraser' ? 28 : t === 'highlight' ? 28 : 3,
+    composite: t === 'eraser' ? 'destination-out' : 'source-over',
+    path: [{ x, y }]
+  };
+}
+
+// 十六进制颜色转RGBA
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+function handlePointerMove(event) {
+  if (!drawing || !currentStroke) return;
+  const rect = annotationCanvas.getBoundingClientRect();
+  currentStroke.path.push({
+    x: ((event.clientX - rect.left) / rect.width) * annotationCanvas.width,
+    y: ((event.clientY - rect.top) / rect.height) * annotationCanvas.height
+  });
+  drawAnnotations();
+}
+function handlePointerUp() {
+  if (!drawing || !currentStroke) return;
+  drawing = false;
+  annotationActions.push(currentStroke); historyStack.push(currentStroke); futureStack = [];
+  saveAnnotations(); currentStroke = null;
+}
+
+// === Mobile Touch Gestures ===
+let touchStartY = 0;
+let touchStartX = 0;
+let touchStartTime = 0;
+let lastTouchDistance = 0;
+let isTwoFinger = false;
+let isPanning = false;
+let panStartX = 0;
+let panStartY = 0;
+let lastPanX = 0;
+let lastPanY = 0;
+let pdfTranslateX = 0;
+let pdfTranslateY = 0;
+
+function initTouchGestures() {
+  const viewer = document.getElementById('previewBody');
+  if (!viewer) return;
+  
+  viewer.addEventListener('touchstart', handleTouchStart, { passive: false });
+  viewer.addEventListener('touchmove', handleTouchMove, { passive: false });
+  viewer.addEventListener('touchend', handleTouchEnd, { passive: false });
+}
+
+function handleTouchStart(e) {
+  if (activeTool) return;
+  
+  touchStartTime = Date.now();
+  
+  if (e.touches.length === 1) {
+    touchStartY = e.touches[0].clientY;
+    touchStartX = e.touches[0].clientX;
+    panStartX = e.touches[0].clientX - pdfTranslateX;
+    panStartY = e.touches[0].clientY - pdfTranslateY;
+    isTwoFinger = false;
+    isPanning = false;
+  } else if (e.touches.length === 2) {
+    isTwoFinger = true;
+    isPanning = false;
+    lastTouchDistance = getTouchDistance(e.touches[0], e.touches[1]);
+  }
+}
+
+function handleTouchMove(e) {
+  if (activeTool) return;
+  
+  if (e.touches.length === 2 && pdfDoc) {
+    e.preventDefault();
+    const currentDistance = getTouchDistance(e.touches[0], e.touches[1]);
+    const scaleDiff = currentDistance / lastTouchDistance;
+    const newScale = Math.min(5, Math.max(0.3, pdfScale * scaleDiff));
+    
+    // 计算缩放中心点
+    const touchCenterX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+    const touchCenterY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+    
+    // 调整平移以保持缩放中心点不变
+    const scaleChange = newScale / pdfScale;
+    pdfTranslateX = touchCenterX - (touchCenterX - pdfTranslateX) * scaleChange;
+    pdfTranslateY = touchCenterY - (touchCenterY - pdfTranslateY) * scaleChange;
+    
+    pdfScale = newScale;
+    lastTouchDistance = currentDistance;
+    updatePdfTransform();
+  } else if (e.touches.length === 1 && pdfDoc && pdfScale > 1) {
+    e.preventDefault();
+    isPanning = true;
+    pdfTranslateX = e.touches[0].clientX - panStartX;
+    pdfTranslateY = e.touches[0].clientY - panStartY;
+    updatePdfTransform();
+  }
+}
+
+function handleTouchEnd(e) {
+  if (activeTool) return;
+  
+  if (isTwoFinger) {
+    isTwoFinger = false;
+    return;
+  }
+  
+  if (isPanning && pdfScale > 1) {
+    isPanning = false;
+    constrainPan();
+    return;
+  }
+  
+  // 单指滑动翻页（仅当未进行平移操作时）
+  if (!isPanning && pdfDoc && Date.now() - touchStartTime < 300) {
+    const deltaY = touchStartY - (e.changedTouches[0]?.clientY || touchStartY);
+    const deltaX = touchStartX - (e.changedTouches[0]?.clientX || touchStartX);
+    const minSwipeDistance = 50;
+    
+    if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > minSwipeDistance) {
+      if (deltaY > 0) {
+        nextPage();
+      } else {
+        prevPage();
+      }
+    } else if (Math.abs(deltaX) > minSwipeDistance) {
+      if (deltaX > 0) {
+        nextPage();
+      } else {
+        prevPage();
+      }
+    }
+  }
+}
+
+function firstPage() {
+  if (!pdfDoc) return;
+  if (currentPage === 1) return;
+  currentPage = 1;
+  updatePageNumber();
+  renderPage(currentPage);
+}
+
+function lastPage() {
+  if (!pdfDoc) return;
+  if (currentPage === pdfDoc.numPages) return;
+  currentPage = pdfDoc.numPages;
+  updatePageNumber();
+  renderPage(currentPage);
+}
+
+function toggleAnnotationTool() {
+  if (!pdfDoc) {
+    showToast('请先打开教材');
+    return;
+  }
+  
+  if (activeTool) {
+    // 当前有激活的工具，取消激活
+    activeTool = null;
+    showToast('已退出标记模式');
+    pdfCanvas.style.cursor = 'default';
+    
+    // 重置标注工具按钮样式
+    document.querySelectorAll('.tbtn').forEach(btn => btn.classList.remove('active'));
+  } else {
+    // 激活高亮工具作为默认标注工具
+    setTool('highlight');
+    showToast('已进入标记模式');
+  }
+}
+
+function updatePdfTransform() {
+  if (!pdfCanvasWrap) return;
+  pdfCanvasWrap.style.transform = `translate(${pdfTranslateX}px, ${pdfTranslateY}px) scale(${pdfScale})`;
+}
+
+function constrainPan() {
+  if (!pdfDoc || pdfScale <= 1) {
+    pdfTranslateX = 0;
+    pdfTranslateY = 0;
+    updatePdfTransform();
+    return;
+  }
+  
+  const wrap = document.getElementById('pdfCanvasWrap');
+  const viewer = document.getElementById('pdfViewer');
+  if (!wrap || !viewer) return;
+  
+  const contentWidth = wrap.offsetWidth * pdfScale;
+  const contentHeight = wrap.offsetHeight * pdfScale;
+  const viewerWidth = viewer.offsetWidth;
+  const viewerHeight = viewer.offsetHeight;
+  
+  const maxX = Math.max(0, (contentWidth - viewerWidth) / 2);
+  const maxY = Math.max(0, (contentHeight - viewerHeight) / 2);
+  
+  pdfTranslateX = Math.max(-maxX, Math.min(maxX, pdfTranslateX));
+  pdfTranslateY = Math.max(-maxY, Math.min(maxY, pdfTranslateY));
+  
+  updatePdfTransform();
+}
+
+function getTouchDistance(touch1, touch2) {
+  const dx = touch2.clientX - touch1.clientX;
+  const dy = touch2.clientY - touch1.clientY;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+function drawAnnotations() {
+  annCtx.clearRect(0, 0, annotationCanvas.width, annotationCanvas.height);
+  const actions = annotationActions.filter(a => !a.page || a.page === currentPage).concat(currentStroke ? [currentStroke] : []);
+  actions.forEach(action => {
+    if (action.type === 'text') {
+      annCtx.save();
+      annCtx.fillStyle = action.color || '#ffd966';
+      annCtx.font = action.font || '18px sans-serif';
+      annCtx.fillText(action.text, action.x, action.y);
+      annCtx.restore();
+      return;
+    }
+    annCtx.save();
+    annCtx.globalCompositeOperation = action.composite || 'source-over';
+    annCtx.strokeStyle = action.color;
+    annCtx.lineWidth = action.lineWidth;
+    annCtx.lineCap = 'round'; annCtx.lineJoin = 'round';
+    annCtx.beginPath();
+    action.path.forEach((p, i) => { i === 0 ? annCtx.moveTo(p.x, p.y) : annCtx.lineTo(p.x, p.y); });
+    annCtx.stroke();
+    annCtx.restore();
+  });
+}
+function resetHistory() {
+  historyStack = []; futureStack = []; annotationActions = []; currentStroke = null;
+  annCtx.clearRect(0, 0, annotationCanvas.width, annotationCanvas.height);
+}
+
+// === Download & Share ===
+function downloadPDF() {
+  if (!current) { showToast('请先选择教材'); return; }
+  
+  const url = current.pdf;
+  const filename = `${current.title}.pdf`;
+  
+  // 老浏览器兼容性检测
+  const isOldBrowser = !('download' in document.createElement('a')) || 
+                       !('fetch' in window) ||
+                       navigator.userAgent.match(/Android 4\.[0-4]/) ||
+                       navigator.userAgent.match(/Safari\/[45]/);
+  
+  if (isOldBrowser) {
+    // 老浏览器：直接在新窗口打开
+    window.open(url, '_blank');
+    showToast('正在打开PDF文件，请长按保存');
+    return;
+  }
+  
+  // 现代浏览器：尝试多种下载方式
+  downloadWithFallback(url, filename);
+}
+
+async function downloadWithFallback(url, filename) {
+  // 方法1：尝试标准 download 属性
+  if (tryStandardDownload(url, filename)) {
+    showToast('已开始下载');
+    return;
+  }
+  
+  // 方法2：尝试 fetch + blob
+  try {
+    const blob = await fetchBlob(url);
+    if (blob) {
+      downloadBlob(blob, filename);
+      showToast('已开始下载');
+      return;
+    }
+  } catch (e) {
+    console.warn('Fetch download failed:', e);
+  }
+  
+  // 方法3：尝试 XHR + blob
+  try {
+    const blob = await fetchBlobWithXHR(url);
+    if (blob) {
+      downloadBlob(blob, filename);
+      showToast('已开始下载');
+      return;
+    }
+  } catch (e) {
+    console.warn('XHR download failed:', e);
+  }
+  
+  // 回退：在新窗口打开
+  window.open(url, '_blank');
+  showToast('请长按PDF页面选择保存');
+}
+
+function tryStandardDownload(url, filename) {
+  try {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.target = '_self';
+    
+    // 添加到DOM
+    document.body.appendChild(link);
+    
+    // 尝试点击
+    const event = new MouseEvent('click', { bubbles: true, cancelable: true });
+    link.dispatchEvent(event);
+    
+    // 延迟移除
+    setTimeout(() => {
+      try { document.body.removeChild(link); } catch(e) {}
+    }, 1000);
+    
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+async function fetchBlob(url) {
+  const response = await fetch(url, {
+    method: 'GET',
+    mode: 'no-cors',
+    cache: 'default'
+  });
+  
+  if (!response.ok && response.type !== 'opaque') {
+    throw new Error('Fetch failed');
+  }
+  
+  return await response.blob();
+}
+
+function fetchBlobWithXHR(url) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.responseType = 'blob';
+    
+    xhr.onload = function() {
+      if (xhr.status === 200 || xhr.status === 0) {
+        resolve(xhr.response);
+      } else {
+        reject(new Error('XHR failed'));
+      }
+    };
+    
+    xhr.onerror = function() {
+      reject(new Error('XHR error'));
+    };
+    
+    xhr.ontimeout = function() {
+      reject(new Error('XHR timeout'));
+    };
+    
+    xhr.timeout = 30000;
+    xhr.send();
+  });
+}
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  // 释放URL对象
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+
+function shareDocument() {
+  if (!current) { showToast('请先选择教材'); return; }
+  updateHash();
+  const url = window.location.href;
+  const title = current.title || '中国教材电子课本';
+  const text = `📚 ${title}\n点击在线阅读：`;
+  
+  // 优先使用 Web Share API（现代浏览器支持）
+  if (navigator.share) {
+    navigator.share({
+      title: title,
+      text: text,
+      url: url
+    }).then(() => {
+      showToast('分享成功');
+    }).catch((err) => {
+      // 用户取消分享或分享失败，回退到复制链接
+      console.log('分享取消或失败:', err);
+      copyToClipboard(url);
+    });
+    return;
+  }
+  
+  // 老浏览器兼容性处理
+  copyToClipboard(url);
+}
+
+function copyToClipboard(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('已复制分享链接');
+    }).catch(() => {
+      fallbackCopy(text);
+    });
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text) {
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.style.position = 'fixed';
+  textarea.style.left = '-9999px';
+  document.body.appendChild(textarea);
+  textarea.select();
+  
+  try {
+    const successful = document.execCommand('copy');
+    if (successful) {
+      showToast('已复制分享链接');
+    } else {
+      showToast('请手动复制链接');
+      window.prompt('复制链接:', text);
+    }
+  } catch (e) {
+    showToast('请手动复制链接');
+    window.prompt('复制链接:', text);
+  }
+  
+  document.body.removeChild(textarea);
+}
+
+// === URL Hash ===
+function updateHash() {
+  if (!current) return;
+  const title = encodeURIComponent(current.title);
+  const hash = `#${title}?page=${currentPage}`;
+  if (window.location.hash !== hash) history.replaceState(null, '', hash);
+}
+
+// === Fullscreen ===
+function toggleFullscreen() {
+  document.body.classList.toggle('fullscreen');
+  const isFS = document.body.classList.contains('fullscreen');
+  document.getElementById('btnFullscreen').classList.toggle('active', isFS);
+  showToast(isFS ? '全屏模式（按 Esc 退出）' : '已退出全屏');
+  if (pdfDoc) setTimeout(() => zoomFit(), 100);
+}
+
+// === Mobile Sidebar ===
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const bd = document.getElementById('sidebarBackdrop');
+  const btn = document.getElementById('sidebarFloatToggle');
+  const isOpen = sb.classList.toggle('mobile-open');
+  bd.classList.toggle('show', isOpen);
+  if (btn) {
+    btn.innerHTML = isOpen ? '<i class="fas fa-times"></i>' : '<i class="fas fa-folder-tree"></i>';
+    btn.title = isOpen ? '关闭目录' : '打开目录';
+  }
+}
+
+// === Keyboard Shortcuts ===
+function toggleShortcuts() {
+  // 快捷键帮助不需要授权
+  document.getElementById('shortcutHint').classList.toggle('show');
+}
+
+// 授权检查辅助函数 - 核心功能现已免费开放
+function requireAuth() {
+  // 核心功能已免费开放，Token仅用于展示用户状态
+  return true;
+}
+
+document.addEventListener('keydown', (e) => {
+  // Ignore when typing in input
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  
+  // 快捷键帮助不需要授权
+  if (e.key === '?' && !e.ctrlKey && !e.metaKey) {
+    e.preventDefault();
+    toggleShortcuts();
+    return;
+  }
+  
+  // 所有其他功能需要授权
+  if (!requireAuth()) {
+    return;
+  }
+  
+  // Ctrl/Cmd 组合键
+  if (e.ctrlKey || e.metaKey) {
+    switch(e.key) {
+      case 'f':
+      case 'F':
+        e.preventDefault();
+        document.getElementById('globalSearch').focus();
+        showToast('搜索教材');
+        break;
+      case 'b':
+      case 'B':
+        e.preventDefault();
+        toggleBookmark();
+        break;
+      case 't':
+      case 'T':
+        e.preventDefault();
+        toggleSidebar();
+        break;
+      case 'm':
+      case 'M':
+        e.preventDefault();
+        toggleFullscreen();
+        break;
+      case 'ArrowLeft':
+        e.preventDefault();
+        goToPage(1); // 跳到第一页
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        goToPage(pdfDoc ? pdfDoc.numPages : 1); // 跳到最后一页
+        break;
+    }
+    return;
+  }
+  
+  // 普通快捷键
+  switch (e.key) {
+    case 'ArrowLeft': 
+    case 'ArrowUp': 
+    case 'PageUp':
+      e.preventDefault(); 
+      prevPage(); 
+      break;
+    case 'ArrowRight': 
+    case 'ArrowDown': 
+    case 'PageDown':
+    case ' ': // 空格键
+      e.preventDefault(); 
+      nextPage(); 
+      break;
+    case 'Home':
+      e.preventDefault();
+      goToPage(1);
+      break;
+    case 'End':
+      e.preventDefault();
+      if (pdfDoc) goToPage(pdfDoc.numPages);
+      break;
+    case '+': 
+    case '=': 
+      e.preventDefault(); 
+      zoomIn(); 
+      break;
+    case '-': 
+    case '_': 
+      e.preventDefault(); 
+      zoomOut(); 
+      break;
+    case '0': 
+      e.preventDefault(); 
+      zoomFit(); 
+      break;
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':
+      e.preventDefault();
+      // 数字键快速跳转页码（按数字n跳转到第n*10页）
+      const targetPage = parseInt(e.key) * 10;
+      if (pdfDoc && targetPage <= pdfDoc.numPages) {
+        goToPage(targetPage);
+        showToast(`跳转到第 ${targetPage} 页`);
+      }
+      break;
+    case 'f': 
+    case 'F': 
+      e.preventDefault(); 
+      toggleFullscreen(); 
+      break;
+    case 'b': 
+    case 'B': 
+      e.preventDefault(); 
+      toggleBookmark(); 
+      break;
+    case 't':
+    case 'T':
+      e.preventDefault();
+      toggleSidebar();
+      break;
+    case '/': 
+      e.preventDefault(); 
+      document.getElementById('globalSearch').focus(); 
+      showToast('搜索教材');
+      break;
+    case 'g':
+    case 'G':
+      e.preventDefault();
+      // G键：输入页码跳转
+      const pageInputEl = document.getElementById('pageInput');
+      if (pageInputEl) {
+        pageInputEl.focus();
+        pageInputEl.select();
+        showToast('输入页码后按Enter跳转');
+      }
+      break;
+    case 'Escape':
+      if (document.body.classList.contains('fullscreen')) toggleFullscreen();
+      document.getElementById('shortcutHint').classList.remove('show');
+      closeModal();
+      // 关闭右键菜单
+      const contextMenu = document.getElementById('contextMenu');
+      if (contextMenu) contextMenu.style.display = 'none';
+      break;
+  }
+});
+
+// === Token ===
+function showTokenModal() { document.getElementById('tokenModal').classList.add('show'); }
+function closeModal() { document.getElementById('tokenModal').classList.remove('show'); }
+function submitToken() {
+  const token = document.getElementById('tokenInput').value.trim();
+  if (!token) { showToast('请输入 Token'); return; }
+  localStorage.setItem('ct_token', token);
+  statusToken.textContent = token.includes('PRE') ? '会员用户' : '普通用户';
+  closeModal(); showToast('Token 已保存');
+}
+
+// === Toast ===
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// === Splitter ===
+function enableSplitters() {
+  document.querySelectorAll('.splitter-v').forEach(splitter => {
+    splitter.addEventListener('mousedown', e => {
+      e.preventDefault();
+      const prev = splitter.previousElementSibling;
+      const next = splitter.nextElementSibling;
+      const startX = e.clientX;
+      const prevW = prev.getBoundingClientRect().width;
+      const nextW = next.getBoundingClientRect().width;
+      const onMove = ev => {
+        const dx = ev.clientX - startX;
+        const min = 120;
+        let np = Math.max(min, prevW + dx);
+        let nn = Math.max(min, nextW - dx);
+        if (np + nn > prevW + nextW) return;
+        prev.style.width = np + 'px'; next.style.width = nn + 'px';
+      };
+      const onUp = () => { document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); };
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+  });
+}
+
+// === Find leaf by title ===
+function findLeafByTitle(title) {
+  for (const l1 of catalog)
+    for (const l2 of (l1.children || []))
+      for (const leaf of (l2.children || []))
+        if (leaf.title === title) return leaf;
+  return null;
+}
+
+// === Init ===
+async function init() {
+  const token = localStorage.getItem('ct_token');
+  if (token) statusToken.textContent = token.includes('PRE') ? '会员用户' : '普通用户';
+  await loadCatalog();
+  // Auto-open sidebar on mobile so users see the tree
+  if (window.innerWidth <= 760) {
+    document.getElementById('sidebar').classList.add('mobile-open');
+    document.getElementById('sidebarBackdrop').classList.add('show');
+  }
+  enableSplitters();
+  attachAnnotationEvents();
+  initTouchGestures();
+
+  // Handle ?file= parameter (from main site redirect)
+  const params = new URLSearchParams(window.location.search);
+  const fileParam = params.get('file');
+  if (fileParam) {
+    try {
+      const src = decodeURIComponent(fileParam);
+      // Security: only allow trusted domains
+      const allowedOrigins = ['https://raw.githubusercontent.com', window.location.origin];
+      const isAllowed = allowedOrigins.some(o => src.startsWith(o));
+      if (!isAllowed) {
+        showToast('不支持的外部链接，仅允许 GitHub 教材库来源');
+        return;
+      }
+      current = { title: src.split('/').pop() || '外部PDF', pdf: src, size: '' };
+      statusFile.textContent = current.title;
+      await showPreview(current.pdf);
+      return;
+    } catch (e) {
+      console.error('file参数加载失败', e);
+      showToast('通过链接加载 PDF 失败');
+    }
+  }
+
+  // Handle hash navigation
+  if (window.location.hash) {
+    const hashValue = decodeURIComponent(window.location.hash.slice(1));
+    const parts = hashValue.split('?page=');
+    const hashTitle = parts[0];
+    const pageFromHash = parts[1] ? parseInt(parts[1], 10) : null;
+    const matched = findLeafByTitle(hashTitle);
+    if (matched) {
+      selectFile(matched, null);
+      if (pageFromHash && !isNaN(pageFromHash)) {
+        setTimeout(() => goToPage(pageFromHash), 500);
+      }
+    }
+  }
+}
+
+// Global error handler
+window.onerror = function(msg, url, line, col, error) {
+  console.error('全局错误:', {msg, url, line, col, error});
+  showError(`页面错误: ${msg}<br>位置: ${url}:${line}`);
+  return false;
+};
+
+window.addEventListener('unhandledrejection', function(e) {
+  console.error('Promise错误:', e.reason);
+  showError(`异步错误: ${e.reason?.message || e.reason}`);
+});
+
+function showError(msg) {
+  const errorDiv = document.createElement('div');
+  errorDiv.style.cssText = `
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white; padding: 40px; border-radius: 16px;
+    max-width: 600px; z-index: 9999; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    font-family: system-ui; text-align: center;
+  `;
+  errorDiv.innerHTML = `
+    <h2 style="margin: 0 0 20px 0; font-size: 24px;">⚠️ 加载错误</h2>
+    <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: left; font-size: 14px;">
+      ${msg}
+    </div>
+    <button onclick="location.reload()" style="background: white; color: #764ba2; border: none; padding: 12px 30px; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold;">
+      重新加载
+    </button>
+  `;
+  document.body.appendChild(errorDiv);
+}
+
+// Start app with error handling
+try {
+  init();
+} catch(e) {
+  console.error('初始化失败:', e);
+  showError(`初始化失败: ${e.message}<br><br>请刷新页面重试`);
+}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- AIGC: {"Label":"value1","ContentProducer":"001191110000802100433B11010001191110000802100433B11010","ProduceID":"450dfa5a-7ab7-425d-a1c0-221087879ee8","ReservedCode1":"72dafc97cd38b92e5f3d5cdfd0dfbbe6","ContentPropagator":"001191110000802100433B11010001191110000802100433B11010","PropagateID":"d7eb6093-56e1-4dc7-90fa-94abbf275929","ReservedCode2":"2734827274df537123a472bf4de01eb5"} -->
+</body>
+</html>
