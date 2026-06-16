@@ -5,15 +5,15 @@
 <!-- Open Graph 基础标签 -->
 <meta property="og:title" content="中国教材电子课本" />
 <meta property="og:description" content="免费在线浏览中小学教材，支持PDF阅读、标注、分享" />
-<meta property="og:image" content="https://media.githubusercontent.com/media/13888285815/workbuddy-ChinaTextbook/main/初中/数学/2025初中数学/初中数学电子课本·北师大版/2025配套学习资料，每天更新，可免费下载、打印.jpg" />
-<meta property="og:url" content="https://13888285815.github.io/ChinaTextbook-Pages/" />
+<meta property="og:image" content="https://raw.githubusercontent.com/13888285815/workbuddy-ChinaTextbook/main/%E5%88%9D%E4%B8%AD/%E6%95%B0%E5%AD%A6/2025%E5%88%9D%E4%B8%AD%E6%95%B0%E5%AD%A6/2025%E9%85%8D%E5%A5%97%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99%EF%BC%8C%E6%AF%8F%E5%A4%A9%E6%9B%B4%E6%96%B0%EF%BC%8C%E5%8F%AF%E5%85%8D%E8%B4%B9%E4%B8%8B%E8%BD%BD%E3%80%81%E6%89%93%E5%8D%B0.jpg" />
+<meta property="og:url" content="https://13888285815.github.io/workbuddy-ChinaTextbook-Pages/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="中国教材电子课本" />
 <!-- Twitter Card 标签 -->
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="中国教材电子课本" />
 <meta name="twitter:description" content="免费在线浏览中小学教材，支持PDF阅读、标注、分享" />
-<meta name="twitter:image" content="https://media.githubusercontent.com/media/13888285815/workbuddy-ChinaTextbook/main/初中/数学/2025初中数学/初中数学电子课本·北师大版/2025配套学习资料，每天更新，可免费下载、打印.jpg" />
+<meta name="twitter:image" content="https://media.githubusercontent.com/media/13888285815/workbuddy-ChinaTextbook/main/%E5%88%9D%E4%B8%AD/%E6%95%B0%E5%AD%A6/2025%E5%88%9D%E4%B8%AD%E6%95%B0%E5%AD%A6/2025%E9%85%8D%E5%A5%97%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99%EF%BC%8C%E6%AF%8F%E5%A4%A9%E6%9B%B4%E6%96%B0%EF%BC%8C%E5%8F%AF%E5%85%8D%E8%B4%B9%E4%B8%8B%E8%BD%BD%E3%80%81%E6%89%93%E5%8D%B0.jpg" />
 <!-- 微信特定标签 -->
 <meta name="description" content="免费在线浏览中小学教材，支持PDF阅读、标注、分享" />
 <meta name="keywords" content="教材,课本,电子课本,中小学教材,PDF阅读" />
@@ -1156,40 +1156,88 @@ function selectFile(item, labelEl) {
   });
 }
 
-// === PDF Preview ===
-
-// 多源CDN配置 - 支持国内外访问，自动fallback
-const PDF_BASE_URLS = [
-  // 主源: media端点（全球可用，正确解析LFS）
-  'https://media.githubusercontent.com/media/13888285815/workbuddy-ChinaTextbook/main/',
-  // 国内备选1: gh-proxy
-  'https://gh-proxy.com/https://raw.githubusercontent.com/13888285815/workbuddy-ChinaTextbook/main/',
-  // 国内备选2: ghproxy镜像  
-  'https://mirror.ghproxy.com/https://raw.githubusercontent.com/13888285815/workbuddy-ChinaTextbook/main/'
+// === Multi-source CDN fallback for PDF loading ===
+const PDF_CDN_SOURCES = [
+  // Source 1: media.githubusercontent.com (direct, works outside China)
+  (path) => `https://media.githubusercontent.com/media/13888285815/workbuddy-ChinaTextbook/main/${path}`,
+  // Source 2: github.com raw redirect (slower but works in more regions)
+  (path) => {
+    const decoded = decodeURIComponent(path);
+    return `https://github.com/13888285815/workbuddy-ChinaTextbook/raw/main/${decoded}`;
+  },
+  // Source 3: gh-proxy.com wrapping media URL
+  (path) => `https://gh-proxy.com/https://media.githubusercontent.com/media/13888285815/workbuddy-ChinaTextbook/main/${path}`,
 ];
 
-// 从URL中提取相对路径（兼容各种base URL格式）
-function extractPdfPath(url) {
-  // 匹配所有已知的 base URL 模式
-  const patterns = [
-    /^https:\/\/media\.githubusercontent\.com\/media\/13888285815\/workbuddy-ChinaTextbook\/main\//,
-    /^https:\/\/raw\.githubusercontent\.com\/13888285815\/workbuddy-ChinaTextbook\/main\//,
-    /^https:\/\/raw\.githubusercontent\.com\/13888285815\/ChinaTextbook\//,
-    /^https:\/\/cdn\.jsdelivr\.net\/gh\/13888285815\/workbuddy-ChinaTextbook@main\//
-  ];
-  for (const p of patterns) {
-    if (p.test(url)) return url.replace(p, '');
-  }
-  // 如果都不匹配，尝试提取最后一个 / 后的路径部分作为备用
-  const lastSlash = url.lastIndexOf('/');
-  if (lastSlash > 0) {
-    const filename = decodeURIComponent(url.substring(lastSlash + 1));
-    console.warn('无法从URL提取完整路径，使用文件名:', filename);
-    return null;
-  }
-  return url;
+function extractPdfPathFromUrl(src) {
+  // Extract the URL-encoded path from media.githubusercontent.com URL
+  // Input: https://media.githubusercontent.com/media/13888285815/workbuddy-ChinaTextbook/main/初中/数学/xxx.pdf
+  // Output: %E5%88%9D%E4%B8%AD/%E6%95%B0%E5%AD%A6/xxx.pdf
+  const m = src.match(/workbuddy-ChinaTextbook\/main\/(.+)$/);
+  return m ? m[1] : '';
 }
 
+async function fetchPdfBufferWithFallback(src) {
+  const path = extractPdfPathFromUrl(src);
+  if (!path) throw new Error('无法解析PDF路径');
+
+  const FETCH_TIMEOUT = 20000; // 20s per source
+  const LFS_POINTER = 'version https://git-lfs.github.com/spec/v1';
+
+  for (let i = 0; i < PDF_CDN_SOURCES.length; i++) {
+    const url = PDF_CDN_SOURCES[i](path);
+    console.log(`[PDF Fallback] Trying source ${i + 1}: ${url}`);
+
+    try {
+      // Step 1: Quick probe – fetch first 200 bytes to check for LFS pointer
+      const probeCtrl = new AbortController();
+      const probeTimer = setTimeout(() => probeCtrl.abort(), 10000);
+      const probeResp = await fetch(url, {
+        method: 'GET',
+        headers: { Range: 'bytes=0-199' },
+        signal: probeCtrl.signal,
+        mode: 'cors',
+      });
+      clearTimeout(probeTimer);
+
+      if (!probeResp.ok) {
+        console.warn(`[PDF Fallback] Source ${i + 1} probe failed: HTTP ${probeResp.status}`);
+        continue;
+      }
+
+      const probeText = await probeResp.text();
+      if (probeText.includes(LFS_POINTER)) {
+        console.warn(`[PDF Fallback] Source ${i + 1} returned LFS pointer, trying next...`);
+        continue;
+      }
+
+      // Step 2: Probe passed – fetch full PDF
+      const fullCtrl = new AbortController();
+      const fullTimer = setTimeout(() => fullCtrl.abort(), FETCH_TIMEOUT);
+      const fullResp = await fetch(url, {
+        signal: fullCtrl.signal,
+        mode: 'cors',
+      });
+      clearTimeout(fullTimer);
+
+      if (!fullResp.ok) {
+        console.warn(`[PDF Fallback] Source ${i + 1} full fetch failed: HTTP ${fullResp.status}`);
+        continue;
+      }
+
+      const arrayBuffer = await fullResp.arrayBuffer();
+      console.log(`[PDF Fallback] Success from source ${i + 1}, size: ${arrayBuffer.byteLength}`);
+      return { arrayBuffer, sourceIndex: i };
+    } catch (err) {
+      console.warn(`[PDF Fallback] Source ${i + 1} error:`, err.message);
+      continue; // try next source
+    }
+  }
+
+  throw new Error('所有CDN源均加载失败，请检查网络连接或稍后重试');
+}
+
+// === PDF Preview ===
 async function showPreview(src) {
   console.log('showPreview called with:', src);
   
@@ -1203,6 +1251,7 @@ async function showPreview(src) {
     showToast('PDF查看器正在初始化，请稍候重试');
     console.error('PDF.js not loaded');
     
+    // 尝试重新加载PDF.js
     setTimeout(() => {
       if (typeof pdfjsLib !== 'undefined') {
         showPreview(src);
@@ -1210,141 +1259,100 @@ async function showPreview(src) {
     }, 1000);
     return;
   }
-
-  // 提取PDF相对路径用于多源fallback
-  const pdfPath = extractPdfPath(src);
-  console.log('PDF relative path:', pdfPath);
   
+  console.log('Loading PDF from:', src);
   emptyState.style.display = 'none';
   pdfViewer.style.display = 'block';
+  showLoading('正在加载 PDF...');
   
   // 重置缩放和平移
   pdfScale = 1.0;
   pdfTranslateX = 0;
   pdfTranslateY = 0;
   
-  // iOS Safari 检测
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  try {
+    console.log('Loading PDF from:', src);
 
-  // PDF基础配置
-  const baseConfig = { 
-    withCredentials: false,
-    disableFontFace: true,
-    useSystemFonts: true,
-    maxImageSize: 1024,
-    stopAtErrors: false,
-    workerSrc: '',
-    disableWorker: true
-  };
+    // Use multi-source CDN fallback to fetch PDF data
+    showLoading('正在连接 PDF 源（多源模式）...');
+    const { arrayBuffer, sourceIndex } = await fetchPdfBufferWithFallback(src);
+    console.log('PDF data fetched, size:', arrayBuffer.byteLength, 'source:', sourceIndex + 1);
 
-  let lastError = null;
+    // iOS Safari 检测
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-  // 遍历所有CDN源尝试加载PDF
-  for (let i = 0; i < PDF_BASE_URLS.length; i++) {
-    const baseUrl = PDF_BASE_URLS[i];
-    const fullUrl = pdfPath ? (baseUrl + encodeURIComponent(pdfPath).replace(/%2F/g, '/')) : src;
+    // PDF配置 - 针对iOS Safari做特殊优化
+    const pdfConfig = {
+      data: arrayBuffer,
+      withCredentials: false,
+      disableFontFace: true,
+      useSystemFonts: true,
+      maxImageSize: 1024,
+      stopAtErrors: false,
+      workerSrc: '',
+      disableWorker: true
+    };
+
+    console.log('PDF配置: data mode, size=' + arrayBuffer.byteLength);
+    showLoading('正在解析 PDF...');
+
+    // 使用异步方式加载PDF，避免主线程阻塞
+    const loadingTask = pdfjsLib.getDocument(pdfConfig);
+
+    loadingTask.onProgress = (progress) => {
+      console.log('PDF加载进度:', progress);
+      if (progress && progress.loaded && progress.total) {
+        const percent = Math.round((progress.loaded / progress.total) * 100);
+        loadingText.textContent = `正在解析 PDF... ${percent}%`;
+      }
+    };
+
+    pdfDoc = await loadingTask.promise;
+
+    console.log('PDF加载成功，页数:', pdfDoc.numPages);
+
+    currentPage = 1;
+    const pageCount = pdfDoc.numPages;
+    pageTotal.textContent = pageCount;
+    pageInput.max = pageCount;
+
+    // 移动端延迟加载缩略图以节省内存
+    if (!isIOS && !('ontouchstart' in window)) {
+      populateThumbs(pageCount);
+    }
+
+    await renderPage(1);
+    hideLoading();
+    const sourceNames = ['media.githubusercontent.com', 'github.com/raw', 'gh-proxy.com'];
+    showToast(`PDF 已加载（${pageCount} 页）· 源: ${sourceNames[sourceIndex] || sourceIndex}`);
+  } catch (e) {
+    console.error('PDF加载失败:', e);
+    console.error('错误堆栈:', e.stack);
+    hideLoading();
     
-    console.log(`[Source ${i+1}/${PDF_BASE_URLS.length}] Trying: ${fullUrl}`);
-    showLoading(`正在加载 PDF... (源 ${i+1}/${PDF_BASE_URLS.length})`);
-    
-    try {
-      // 先用fetch测试URL是否可访问（5秒超时）
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000);
-      
-      const fetchResp = await fetch(fullUrl, { 
-        signal: controller.signal,
-        method: 'HEAD',
-        mode: 'cors'
-      });
-      clearTimeout(timeoutId);
-      
-      if (!fetchResp.ok || fetchResp.status !== 200) {
-        console.warn(`[Source ${i+1}] HTTP ${fetchResp.status}, trying next...`);
-        lastError = new Error(`HTTP ${fetchResp.status}`);
-        continue;
-      }
-      
-      // 检查内容类型和大小
-      const contentType = fetchResp.headers.get('content-type') || '';
-      const contentLength = parseInt(fetchResp.headers.get('content-length') || '0', 10);
-      console.log(`[Source ${i+1}] Content-Type: ${contentType}, Size: ${contentLength}`);
-      
-      // 如果返回的内容太小（可能是LFS指针），跳过
-      if (contentLength > 0 && contentLength < 500) {
-        console.warn(`[Source ${i+1}] Response too small (${contentLength} bytes), likely LFS pointer, skipping...`);
-        lastError = new Error('Response is an LFS pointer file, not actual PDF');
-        continue;
-      }
-      
-      // 使用pdfjsLib加载PDF
-      showLoading('正在加载 PDF...');
-      const loadingTask = pdfjsLib.getDocument({ ...baseConfig, url: fullUrl });
-      
-      loadingTask.onProgress = (progress) => {
-        console.log('[Source ' + (i+1) + '] PDF加载进度:', progress);
-        if (progress && progress.loaded && progress.total) {
-          const percent = Math.round((progress.loaded / progress.total) * 100);
-          loadingText.textContent = `正在加载 PDF... ${percent}%`;
-        }
-      };
-      
-      pdfDoc = await loadingTask.promise;
-      
-      console.log(`[Source ${i+1}] PDF加载成功！页数:`, pdfDoc.numPages);
-      
-      currentPage = 1;
-      const pageCount = pdfDoc.numPages;
-      pageTotal.textContent = pageCount;
-      pageInput.max = pageCount;
-      
-      if (!isIOS && !('ontouchstart' in window)) {
-        populateThumbs(pageCount);
-      }
-      
-      await renderPage(1);
-      hideLoading();
-      showToast(`PDF 已加载（${pageCount} 页）- 使用源 ${i+1}`);
-      return; // 成功，退出
-      
-    } catch (e) {
-      console.warn(`[Source ${i+1}] 失败:`, e.message);
-      lastError = e;
-      
-      // 如果是abort错误且还有其他源，继续尝试
-      if (e.name === 'AbortError' && i < PDF_BASE_URLS.length - 1) {
-        continue;
-      }
-      // 其他错误也继续尝试下一个源
-      if (i < PDF_BASE_URLS.length - 1) {
-        continue;
+    let errorMsg = 'PDF 加载失败';
+    if (e.message) {
+      if (e.message.includes('Missing PDF') || e.message.includes('404')) {
+        errorMsg = 'PDF文件不存在或地址错误';
+      } else if (e.message.includes('CORS') || e.message.includes('Access-Control')) {
+        errorMsg = '跨域访问被拒绝，请检查网络设置';
+      } else if (e.message.includes('network') || e.message.includes('fetch') || e.message.includes('request') || e.message.includes('Failed to fetch')) {
+        errorMsg = '网络错误，请检查网络连接';
+      } else if (e.message.includes('Unexpected server response')) {
+        errorMsg = '服务器响应异常，请稍后重试';
+      } else if (e.message.includes('Invalid PDF') || e.message.includes('Corrupt')) {
+        errorMsg = 'PDF文件损坏或格式不正确';
+      } else if (e.message.includes('Failed to fetch') || e.message.includes('NetworkError')) {
+        errorMsg = '网络请求失败，请检查网络连接或稍后重试';
+      } else {
+        errorMsg = 'PDF加载失败: ' + e.message;
       }
     }
+    
+    showToast(errorMsg);
+    pdfViewer.style.display = 'none';
+    emptyState.style.display = 'flex';
   }
-  
-  // 所有源都失败了
-  console.error('所有PDF源均失败，最后错误:', lastError);
-  hideLoading();
-
-  let errorMsg = 'PDF 加载失败';
-  if (lastError && lastError.message) {
-    const msg = lastError.message;
-    if (msg.includes('Missing PDF') || msg.includes('404')) {
-      errorMsg = 'PDF文件不存在或地址错误';
-    } else if (msg.includes('CORS') || msg.includes('Access-Control')) {
-      errorMsg = '跨域访问被拒绝，请检查网络或使用代理';
-    } else if (msg.includes('network') || msg.includes('fetch') || msg.includes('request') || msg.includes('Failed to fetch') || msg.includes('AbortError')) {
-      errorMsg = '网络连接超时或失败，请检查网络后刷新页面重试';
-    } else if (msg.includes('LFS pointer')) {
-      errorMsg = 'PDF文件未正确存储（LFS指针问题），请联系管理员';
-    } else {
-      errorMsg = 'PDF加载失败: ' + msg;
-    }
-  }
-  
-  showToast(errorMsg);
-  pdfViewer.style.display = 'none';
-  emptyState.style.display = 'flex';
 }
 function showLoading(text) { loadingText.textContent = text || '加载中...'; loadingOverlay.classList.add('show'); }
 function hideLoading() { loadingOverlay.classList.remove('show'); }
